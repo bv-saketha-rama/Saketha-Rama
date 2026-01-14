@@ -42,6 +42,9 @@ const CircuitDiagram = () => {
         const ctx = canvas.getContext('2d');
         let animationFrameId;
         let progress = 0;
+        let lastTime = 0;
+        const targetFPS = 30; // Reduce to 30 FPS for background animation
+        const frameInterval = 1000 / targetFPS;
 
         const resizeCanvas = () => {
             canvas.width = window.innerWidth;
@@ -54,7 +57,14 @@ const CircuitDiagram = () => {
         const circuitKeys = Object.keys(circuits);
         let currentCircuitIndex = 0;
 
-        const draw = () => {
+        const draw = (currentTime) => {
+            animationFrameId = window.requestAnimationFrame(draw);
+
+            // Throttle to target FPS
+            const deltaTime = currentTime - lastTime;
+            if (deltaTime < frameInterval) return;
+            lastTime = currentTime - (deltaTime % frameInterval);
+
             const width = canvas.width;
             const height = canvas.height;
 
@@ -67,27 +77,28 @@ const CircuitDiagram = () => {
 
             const currentCircuit = circuits[circuitKeys[currentCircuitIndex]];
 
-            // Draw circuit outline
+            // Draw circuit outline - simplified
             ctx.strokeStyle = 'rgba(0, 255, 255, 0.15)';
             ctx.lineWidth = 3;
             ctx.setLineDash([5, 10]);
             ctx.beginPath();
 
-            currentCircuit.forEach((point, index) => {
+            for (let i = 0; i < currentCircuit.length; i++) {
+                const point = currentCircuit[i];
                 const x = point.x * width * 0.6 + width * 0.2;
                 const y = point.y * height * 0.5 + height * 0.25;
 
-                if (index === 0) {
+                if (i === 0) {
                     ctx.moveTo(x, y);
                 } else {
                     ctx.lineTo(x, y);
                 }
-            });
+            }
 
             ctx.stroke();
 
-            // Draw animated racing line
-            progress = (progress + 0.005) % 1;
+            // Draw animated racing line - simplified
+            progress = (progress + 0.003) % 1; // Slower animation
 
             ctx.strokeStyle = 'rgba(255, 0, 60, 0.6)';
             ctx.lineWidth = 2;
@@ -110,8 +121,9 @@ const CircuitDiagram = () => {
 
             ctx.stroke();
 
-            // Draw DRS zones (random sections)
-            ctx.fillStyle = 'rgba(0, 255, 255, 0.1)';
+            // Simplified DRS zone
+            ctx.lineWidth = 8;
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.2)';
             const drsStart = Math.floor(currentCircuit.length * 0.3);
             const drsEnd = Math.floor(currentCircuit.length * 0.5);
 
@@ -127,31 +139,23 @@ const CircuitDiagram = () => {
                     ctx.lineTo(x, y);
                 }
             }
-            ctx.lineWidth = 8;
-            ctx.strokeStyle = 'rgba(0, 255, 255, 0.2)';
             ctx.stroke();
 
-            // Add sector markers
+            // Simplified sector markers - only 3 static markers
+            ctx.fillStyle = 'rgba(0, 255, 255, 0.3)';
             const sectors = [0, Math.floor(currentCircuit.length / 3), Math.floor(2 * currentCircuit.length / 3)];
-            sectors.forEach((sectorIndex, i) => {
-                const point = currentCircuit[sectorIndex];
+            for (let i = 0; i < sectors.length; i++) {
+                const point = currentCircuit[sectors[i]];
                 const x = point.x * width * 0.6 + width * 0.2;
                 const y = point.y * height * 0.5 + height * 0.25;
 
-                ctx.fillStyle = 'rgba(0, 255, 255, 0.3)';
                 ctx.beginPath();
                 ctx.arc(x, y, 6, 0, Math.PI * 2);
                 ctx.fill();
-
-                ctx.fillStyle = 'rgba(0, 255, 255, 0.6)';
-                ctx.font = '12px Orbitron, sans-serif';
-                ctx.fillText(`S${i + 1}`, x + 10, y + 5);
-            });
-
-            animationFrameId = window.requestAnimationFrame(draw);
+            }
         };
 
-        draw();
+        animationFrameId = window.requestAnimationFrame(draw);
 
         return () => {
             window.removeEventListener('resize', resizeCanvas);

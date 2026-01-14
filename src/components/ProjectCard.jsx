@@ -1,14 +1,10 @@
-import { motion } from 'framer-motion';
 import { Activity, GitBranch } from 'lucide-react';
 
 const ProjectCard = ({ title, role, description, tech, index }) => {
     return (
-        <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
-            whileHover={{ scale: 1.02, x: 10 }}
-            className="group relative overflow-hidden border border-racing-cyan/30 bg-racing-asphalt p-6 transition-all hover:border-racing-cyan hover:shadow-[0_0_20px_rgba(0,243,255,0.2)]"
+        <div
+            className="group relative overflow-hidden border border-racing-cyan/30 bg-racing-asphalt p-6 hover:border-racing-cyan"
+            style={{ transition: 'border-color 0.2s ease, box-shadow 0.2s ease' }}
         >
             {/* Technical markings */}
             <div className="absolute -right-4 -top-4 h-16 w-16 border border-racing-cyan/10" />
@@ -22,7 +18,7 @@ const ProjectCard = ({ title, role, description, tech, index }) => {
                         <Activity size={14} className="text-racing-red" />
                         <span className="font-mono text-xs text-racing-cyan">TELEMETRY ACTIVE</span>
                     </div>
-                    <h3 className="font-racing text-2xl font-bold italic text-white group-hover:text-racing-cyan">
+                    <h3 className="font-racing text-2xl font-bold italic text-white group-hover:text-racing-cyan" style={{ transition: 'color 0.2s ease' }}>
                         {title}
                     </h3>
                 </div>
@@ -46,7 +42,7 @@ const ProjectCard = ({ title, role, description, tech, index }) => {
                     ))}
                 </div>
             </div>
-        </motion.div>
+        </div>
     );
 };
 

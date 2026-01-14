@@ -1,17 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 const RacingParticles = () => {
     const canvasRef = useRef(null);
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-
-    useEffect(() => {
-        const handleMouseMove = (e) => {
-            setMousePos({ x: e.clientX, y: e.clientY });
-        };
-
-        window.addEventListener('mousemove', handleMouseMove);
-        return () => window.removeEventListener('mousemove', handleMouseMove);
-    }, []);
+    const mousePosRef = useRef({ x: 0, y: 0 });
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -23,10 +14,16 @@ const RacingParticles = () => {
             canvas.height = window.innerHeight;
         };
 
+        // Throttled mouse move handler - only updates the ref, no state changes
+        const handleMouseMove = (e) => {
+            mousePosRef.current = { x: e.clientX, y: e.clientY };
+        };
+
         window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('mousemove', handleMouseMove, { passive: true });
         resizeCanvas();
 
-        // Particle system for speed lines
+        // Particle system for speed lines - reduced count for performance
         class Particle {
             constructor() {
                 this.reset();
@@ -50,11 +47,8 @@ const RacingParticles = () => {
             }
 
             draw() {
-                const gradient = ctx.createLinearGradient(this.x, this.y, this.x - this.length, this.y);
-                gradient.addColorStop(0, `rgba(0, 255, 255, ${this.opacity})`);
-                gradient.addColorStop(1, 'rgba(0, 255, 255, 0)');
-
-                ctx.strokeStyle = gradient;
+                // Simplified gradient for better performance
+                ctx.strokeStyle = `rgba(0, 255, 255, ${this.opacity})`;
                 ctx.lineWidth = 1;
                 ctx.beginPath();
                 ctx.moveTo(this.x, this.y);
@@ -71,13 +65,13 @@ const RacingParticles = () => {
                 this.vx = (Math.random() - 0.5) * 4;
                 this.vy = (Math.random() - 0.5) * 4;
                 this.life = 1;
-                this.decay = Math.random() * 0.02 + 0.01;
+                this.decay = Math.random() * 0.03 + 0.02; // Faster decay
             }
 
             update() {
                 this.x += this.vx;
                 this.y += this.vy;
-                this.vy += 0.1; // gravity
+                this.vy += 0.1;
                 this.life -= this.decay;
             }
 
@@ -89,38 +83,40 @@ const RacingParticles = () => {
             }
         }
 
-        const particles = Array.from({ length: 50 }, () => new Particle());
+        // Reduced particle count from 50 to 25
+        const particles = Array.from({ length: 25 }, () => new Particle());
         let sparks = [];
-        let lastMousePos = { ...mousePos };
+        let lastMousePos = { x: 0, y: 0 };
 
         const draw = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Update and draw speed lines
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
-            });
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
 
-            // Create sparks when mouse moves
-            const distance = Math.sqrt(
-                Math.pow(mousePos.x - lastMousePos.x, 2) +
-                Math.pow(mousePos.y - lastMousePos.y, 2)
-            );
+            // Create sparks when mouse moves - using ref instead of state
+            const mousePos = mousePosRef.current;
+            const dx = mousePos.x - lastMousePos.x;
+            const dy = mousePos.y - lastMousePos.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance > 10) {
-                for (let i = 0; i < 3; i++) {
-                    sparks.push(new Spark(mousePos.x, mousePos.y));
-                }
+            if (distance > 15 && sparks.length < 30) { // Limit max sparks
+                sparks.push(new Spark(mousePos.x, mousePos.y));
                 lastMousePos = { ...mousePos };
             }
 
-            // Update and draw sparks
-            sparks = sparks.filter(spark => spark.life > 0);
-            sparks.forEach(spark => {
-                spark.update();
-                spark.draw();
-            });
+            // Update and draw sparks - optimized filtering
+            for (let i = sparks.length - 1; i >= 0; i--) {
+                sparks[i].update();
+                if (sparks[i].life <= 0) {
+                    sparks.splice(i, 1);
+                } else {
+                    sparks[i].draw();
+                }
+            }
 
             animationFrameId = window.requestAnimationFrame(draw);
         };
@@ -129,9 +125,10 @@ const RacingParticles = () => {
 
         return () => {
             window.removeEventListener('resize', resizeCanvas);
+            window.removeEventListener('mousemove', handleMouseMove);
             window.cancelAnimationFrame(animationFrameId);
         };
-    }, [mousePos]);
+    }, []); // Empty dependency array - no re-initialization
 
     return (
         <canvas
