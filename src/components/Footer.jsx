@@ -8,7 +8,7 @@ const Footer = () => {
                     <p>© {currentYear} Saketha Rama. All rights reserved.</p>
 
                     <div className="flex gap-6">
-                        <a href="https://github.com/bv-saketha-rama" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-text)] transition-colors">Source Code</a>
+                        <a href="https://github.com/bv-saketha-rama/Saketha-Rama" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-text)] transition-colors">Source Code</a>
                     </div>
                 </div>
             </div>

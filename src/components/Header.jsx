@@ -20,12 +20,12 @@ const Header = ({ toggleTheme, isDark }) => {
 
     return (
         <header className="sticky top-0 z-50 bg-[var(--color-bg)] border-b border-[var(--color-border)] backdrop-blur-sm bg-opacity-80">
-            <nav className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between gap-12">
+            <nav className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4 md:gap-12">
                 <a href="/" className="font-bold text-xl text-[var(--color-text)] hover:no-underline whitespace-nowrap z-50">
                     Saketha Rama
                 </a>
 
-                <div className="flex items-center gap-4 md:gap-8">
+                <div className="flex items-center gap-2 md:gap-8">
                     {/* Desktop Navigation */}
                     <div className="hidden xl:flex items-center gap-6">
                         {navLinks.map(link => (
@@ -39,7 +39,7 @@ const Header = ({ toggleTheme, isDark }) => {
                         ))}
                     </div>
 
-                    <div className="flex items-center gap-3 border-l border-[var(--color-border)] pl-4 z-50">
+                    <div className="flex items-center gap-2 sm:gap-3 border-l border-[var(--color-border)] pl-3 sm:pl-4 z-50">
                         <a href="https://github.com/bv-saketha-rama" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hidden sm:block" title="GitHub">
                             <Github size={18} />
                         </a>
@@ -58,7 +58,7 @@ const Header = ({ toggleTheme, isDark }) => {
 
                         <button
                             onClick={toggleTheme}
-                            className="p-2 ml-2 rounded-full hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
+                            className="p-2 ml-1 sm:ml-2 rounded-full hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
                             aria-label="Toggle Theme"
                         >
                             {isDark ? <Sun size={18} /> : <Moon size={18} />}
@@ -67,7 +67,7 @@ const Header = ({ toggleTheme, isDark }) => {
                         {/* Hamburger Button */}
                         <button
                             onClick={toggleMobileNav}
-                            className="p-2 ml-2 rounded-full xl:hidden hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
+                            className="p-2 ml-1 sm:ml-2 rounded-full xl:hidden hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
                             aria-label={isMobileNavOpen ? "Close menu" : "Open menu"}
                             aria-expanded={isMobileNavOpen}
                         >
