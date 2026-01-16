@@ -20,17 +20,15 @@ const Writing = () => {
                             <div className="text-[10px] font-mono tracking-widest uppercase text-[var(--color-text-secondary)] bg-[var(--color-bg)] px-3 py-1 rounded-full border border-[var(--color-border)]">
                                 {post.date}
                             </div>
-                            {post.link && (
-                                <a
-                                    href={post.link}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
-                                    aria-label={`Read ${post.title} on Hashnode`}
-                                >
-                                    <HashnodeIcon size={20} />
-                                </a>
-                            )}
+                            <a
+                                href={post.link || "#"}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors ${!post.link && 'opacity-50 cursor-not-allowed'}`}
+                                aria-label={`Read ${post.title} on Hashnode`}
+                            >
+                                <HashnodeIcon size={20} />
+                            </a>
                         </div>
 
                         <h3 className="text-lg font-bold text-[var(--color-text)] mb-3 group-hover:text-[var(--color-accent)] transition-colors leading-tight">

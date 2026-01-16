@@ -20,28 +20,24 @@ const Projects = () => {
                                 {project.title}
                             </h3>
                             <div className="flex gap-3">
-                                {project.links?.github && (
-                                    <a
-                                        href={project.links.github}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
-                                        aria-label={`View ${project.title} on GitHub`}
-                                    >
-                                        <Github size={20} />
-                                    </a>
-                                )}
-                                {project.links?.blog && (
-                                    <a
-                                        href={project.links.blog}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
-                                        aria-label={`Read blog about ${project.title}`}
-                                    >
-                                        <HashnodeIcon size={20} />
-                                    </a>
-                                )}
+                                <a
+                                    href={project.links?.github || "#"}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={`text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors ${!project.links?.github && 'opacity-50 cursor-not-allowed'}`}
+                                    aria-label={`View ${project.title} on GitHub`}
+                                >
+                                    <Github size={20} />
+                                </a>
+                                <a
+                                    href={project.links?.blog || "#"}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={`text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors ${!project.links?.blog && 'opacity-50 cursor-not-allowed'}`}
+                                    aria-label={`Read blog about ${project.title}`}
+                                >
+                                    <HashnodeIcon size={20} />
+                                </a>
                             </div>
                         </div>
 

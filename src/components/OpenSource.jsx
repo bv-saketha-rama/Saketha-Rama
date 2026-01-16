@@ -59,27 +59,25 @@ const OpenSource = () => {
                             </div>
                             <div className="flex gap-3">
                                 <a
-                                    href={item.link}
+                                    href={item.link || "#"}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
+                                    className={`text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors ${!item.link && 'opacity-50 cursor-not-allowed'}`}
                                     title="View PR on GitHub"
                                     aria-label={`View PR for ${item.title} on GitHub`}
                                 >
                                     <Github size={20} />
                                 </a>
-                                {item.blog && (
-                                    <a
-                                        href={item.blog}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
-                                        title="Read blog"
-                                        aria-label={`Read blog about ${item.title}`}
-                                    >
-                                        <HashnodeIcon size={20} />
-                                    </a>
-                                )}
+                                <a
+                                    href={item.blog || "#"}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={`text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors ${!item.blog && 'opacity-50 cursor-not-allowed'}`}
+                                    title="Read blog"
+                                    aria-label={`Read blog about ${item.title}`}
+                                >
+                                    <HashnodeIcon size={20} />
+                                </a>
                             </div>
                         </div>
 
