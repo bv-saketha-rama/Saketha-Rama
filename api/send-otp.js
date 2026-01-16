@@ -1,17 +1,13 @@
 import { Resend } from 'resend';
+import { kv } from '@vercel/kv';
 import crypto from 'crypto';
 
 const resendApiKey = process.env.RESEND_API_KEY;
-// Only initialize Resend if key looks real (not placeholder)
 const resend = (resendApiKey && resendApiKey !== 'your_resend_api_key_here')
     ? new Resend(resendApiKey)
     : null;
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
-
-// Simple in-memory store
-const otpStore = globalThis.otpStore || (globalThis.otpStore = {});
-const otpThrottle = globalThis.otpThrottle || (globalThis.otpThrottle = new Map());
 const COOLDOWN_MS = 60000; // 60 seconds
 
 export default async function handler(req, res) {
@@ -29,30 +25,26 @@ export default async function handler(req, res) {
             clientIp = forwarded;
         }
     }
-
-    // Fallback to ensure we have a string
     clientIp = clientIp || 'unknown';
 
-    const lastSent = otpThrottle.get(clientIp);
-
-    if (lastSent && Date.now() - lastSent < COOLDOWN_MS) {
-        return res.status(429).json({ error: 'Too many requests, try again later' });
-    }
-
     try {
+        // Rate Limiting via KV
+        const throttleKey = `otp_throttle:${clientIp}`;
+        const isThrottled = await kv.exists(throttleKey);
+
+        if (isThrottled) {
+            return res.status(429).json({ error: 'Too many requests, try again later' });
+        }
+
         // Generate secure 6-digit OTP
         const otp = crypto.randomInt(100000, 1000000).toString();
-        const expiry = Date.now() + 5 * 60 * 1000; // 5 minutes
-
-        // Store OTP with expiry
-        otpStore.otp = otp;
-        otpStore.expiry = expiry;
-
-        // Update throttle
-        otpThrottle.set(clientIp, Date.now());
 
         // If no valid Resend key, just log it (Dev Mode)
         if (!resend) {
+            // Write to KV before returning in Dev Mode
+            await kv.set('admin_otp', otp, { ex: 300 }); // 5 mins
+            await kv.set(throttleKey, '1', { ex: 60 });
+
             console.log('================================================');
             console.log(`[DEV MODE] OTP Generated for ${ADMIN_EMAIL}: ${otp}`);
             console.log('================================================');
@@ -65,6 +57,7 @@ export default async function handler(req, res) {
                 message: 'OTP sent (Check console for Dev Mode)'
             });
         }
+
 
         // Send email via Resend
         const { error } = await resend.emails.send({
@@ -87,12 +80,20 @@ export default async function handler(req, res) {
 
         if (error) {
             console.error('Email error:', error);
-            // Fallback for demo purposes if email fails
+            // Fallback: If email fails, we log it, so we SHOULD still persist the OTP and throttle
+            // because the admin can technically still access it via logs.
+            await kv.set('admin_otp', otp, { ex: 300 });
+            await kv.set(throttleKey, '1', { ex: 60 });
+
             console.log('================================================');
             console.log(`[FALLBACK] Email failed. OTP is: ${otp}`);
             console.log('================================================');
             return res.status(200).json({ success: true, message: 'OTP generated (Email failed, check console)' });
         }
+
+        // Success path: Store OTP and Throttle
+        await kv.set('admin_otp', otp, { ex: 300 }); // 5 mins
+        await kv.set(throttleKey, '1', { ex: 60 });
 
         return res.status(200).json({ success: true, message: 'OTP sent successfully' });
     } catch (error) {
