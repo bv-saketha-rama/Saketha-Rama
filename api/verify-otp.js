@@ -51,9 +51,7 @@ export default async function handler(req, res) {
         }
 
         // Clear OTP and attempts after successful verification
-        await kv.del('admin_otp');
-        await kv.del('admin_otp_attempts');
-        await kv.del('admin_lockout'); // Clear lockout just in case
+        await kv.del('admin_otp', 'admin_otp_attempts', 'admin_lockout');
 
         // Generate a secure session token
         const sessionToken = crypto.randomBytes(32).toString('hex');
