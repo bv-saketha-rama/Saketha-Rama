@@ -1,4 +1,4 @@
-import { Github, Linkedin, Twitter, Mail, FileText } from 'lucide-react';
+import { Github, Linkedin, Twitter, Mail } from 'lucide-react';
 import HashnodeIcon from './icons/HashnodeIcon';
 
 const socialLinks = [
@@ -31,12 +31,6 @@ const socialLinks = [
         icon: <HashnodeIcon size={20} />,
         url: "https://hashnode.com/@saketha-rama",
         description: "Read my blogs"
-    },
-    {
-        name: "Resume",
-        icon: <FileText size={20} />,
-        url: "/resume",
-        description: "View Resume"
     }
 ];
 

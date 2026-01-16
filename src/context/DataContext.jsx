@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+
 import { defaultProjects } from '../data/projectsData';
 import { defaultBlogs } from '../data/blogsData';
 
@@ -14,51 +14,9 @@ export const useData = () => {
 };
 
 export const DataProvider = ({ children }) => {
-    const [projects, setProjects] = useLocalStorage('portfolio-projects', defaultProjects);
-    const [blogs, setBlogs] = useLocalStorage('portfolio-blogs', defaultBlogs);
-    const [resume, setResume] = useLocalStorage('portfolio-resume', null);
-
-    // Projects CRUD
-    const addProject = (project) => {
-        const newProject = { ...project, id: Date.now() };
-        setProjects([...projects, newProject]);
-        return newProject;
-    };
-
-    const updateProject = (id, updatedProject) => {
-        setProjects(projects.map(p => p.id === id ? { ...p, ...updatedProject } : p));
-    };
-
-    const deleteProject = (id) => {
-        setProjects(projects.filter(p => p.id !== id));
-    };
-
-    // Blogs CRUD
-    const addBlog = (blog) => {
-        const newBlog = { ...blog, id: Date.now() };
-        setBlogs([...blogs, newBlog]);
-        return newBlog;
-    };
-
-    const updateBlog = (id, updatedBlog) => {
-        setBlogs(blogs.map(b => b.id === id ? { ...b, ...updatedBlog } : b));
-    };
-
-    const deleteBlog = (id) => {
-        setBlogs(blogs.filter(b => b.id !== id));
-    };
-
     const value = {
-        projects,
-        blogs,
-        resume,
-        setResume,
-        addProject,
-        updateProject,
-        deleteProject,
-        addBlog,
-        updateBlog,
-        deleteBlog
+        projects: defaultProjects,
+        blogs: defaultBlogs
     };
 
     return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
