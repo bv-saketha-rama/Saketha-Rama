@@ -5,8 +5,8 @@ export const defaultProjects = [
         description: "A real-time communication infrastructure built for high concurrency with WebSocket support.",
         tech: ["Go", "WebSocket", "Redis", "Docker"],
         links: {
-            github: "",
-            blog: ""
+            github: null,
+            blog: null
         }
     },
     {
@@ -15,8 +15,8 @@ export const defaultProjects = [
         description: "Scalable microservices architecture handling thousands of transactions per second.",
         tech: ["Node.js", "PostgreSQL", "Kubernetes", "gRPC"],
         links: {
-            github: "",
-            blog: ""
+            github: null,
+            blog: null
         }
     },
     {
@@ -25,8 +25,8 @@ export const defaultProjects = [
         description: "ETL pipeline processing terabytes of log data daily with real-time analytics.",
         tech: ["Python", "Apache Kafka", "AWS S3", "ClickHouse"],
         links: {
-            github: "",
-            blog: ""
+            github: null,
+            blog: null
         }
     }
 ];

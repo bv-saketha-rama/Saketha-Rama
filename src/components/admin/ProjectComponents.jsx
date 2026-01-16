@@ -16,6 +16,8 @@ export const ProjectForm = ({ form, setForm, onSubmit, onCancel, isEditing = fal
     const btnPrimary = "px-4 py-2 bg-[var(--color-accent)] text-white rounded-xl hover:opacity-90 transition-opacity";
     const btnSecondary = "px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-xl text-[var(--color-text)] hover:border-[var(--color-accent)] transition-colors";
 
+    const links = form.links || { github: '', blog: '' };
+
     const validate = () => {
         const newErrors = {};
         if (!form.title.trim()) newErrors.title = 'Title is required';
@@ -65,15 +67,15 @@ export const ProjectForm = ({ form, setForm, onSubmit, onCancel, isEditing = fal
                 <input
                     type="text"
                     placeholder="GitHub Link"
-                    value={form.links.github}
-                    onChange={(e) => setForm({ ...form, links: { ...form.links, github: e.target.value } })}
+                    value={links.github}
+                    onChange={(e) => setForm({ ...form, links: { ...links, github: e.target.value } })}
                     className={inputClass}
                 />
                 <input
                     type="text"
                     placeholder="Blog Link (Hashnode)"
-                    value={form.links.blog}
-                    onChange={(e) => setForm({ ...form, links: { ...form.links, blog: e.target.value } })}
+                    value={links.blog}
+                    onChange={(e) => setForm({ ...form, links: { ...links, blog: e.target.value } })}
                     className={inputClass}
                 />
             </div>
@@ -98,14 +100,14 @@ export const ProjectListItem = ({ project, onEdit, onDelete }) => {
                     <button
                         onClick={() => onEdit(project)}
                         className="p-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] hover:border-[var(--color-accent)] transition-colors"
-                        aria-label="Edit project"
+                        aria-label={`Edit project ${project.title}`}
                     >
                         <Edit2 size={16} />
                     </button>
                     <button
                         onClick={() => onDelete(project.id)}
                         className="p-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg text-red-500 hover:border-red-500 transition-colors"
-                        aria-label="Delete project"
+                        aria-label={`Delete project ${project.title}`}
                     >
                         <Trash2 size={16} />
                     </button>
@@ -113,7 +115,7 @@ export const ProjectListItem = ({ project, onEdit, onDelete }) => {
             </div>
             <p className="text-[var(--color-text-secondary)] mb-4">{project.description}</p>
             <div className="flex flex-wrap gap-2 mb-4">
-                {project.tech.map((tech, i) => (
+                {(Array.isArray(project.tech) ? project.tech : []).map((tech, i) => (
                     <span key={i} className="px-3 py-1 text-xs bg-[var(--color-bg)] border border-[var(--color-border)] rounded-full text-[var(--color-text-secondary)]">
                         {tech}
                     </span>

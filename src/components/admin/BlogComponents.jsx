@@ -92,14 +92,14 @@ export const BlogListItem = ({ blog, onEdit, onDelete }) => {
                     <button
                         onClick={() => onEdit(blog)}
                         className="p-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg text-[var(--color-text)] hover:border-[var(--color-accent)] transition-colors"
-                        aria-label="Edit blog"
+                        aria-label={`Edit ${blog.title}`}
                     >
                         <Edit2 size={16} />
                     </button>
                     <button
                         onClick={() => onDelete(blog.id)}
                         className="p-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg text-red-500 hover:border-red-500 transition-colors"
-                        aria-label="Delete blog"
+                        aria-label={`Delete ${blog.title}`}
                     >
                         <Trash2 size={16} />
                     </button>

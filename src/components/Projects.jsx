@@ -48,7 +48,7 @@ const Projects = () => {
                         </p>
 
                         <div className="flex flex-wrap gap-2 pt-4 border-t border-[var(--color-border)] border-opacity-50">
-                            {project.tech.map((tech, i) => (
+                            {(Array.isArray(project.tech) ? project.tech : []).map((tech, i) => (
                                 <span
                                     key={i}
                                     className="px-3 py-1 text-[10px] font-mono tracking-wider uppercase bg-[var(--color-bg)] border border-[var(--color-border)] rounded-full text-[var(--color-text-secondary)]"

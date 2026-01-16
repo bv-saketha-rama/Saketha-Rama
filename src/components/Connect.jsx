@@ -35,7 +35,7 @@ const socialLinks = [
     {
         name: "Resume",
         icon: <FileText size={20} />,
-        url: "/resume.pdf",
+        url: "/resume.pdf", // Ensure this file exists in public/ or update logic if needed
         description: "Download PDF"
     }
 ];

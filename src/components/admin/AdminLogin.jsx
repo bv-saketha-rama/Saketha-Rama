@@ -36,6 +36,12 @@ const AdminLogin = ({ onLogin }) => {
 
     const handleVerifyOTP = async (e) => {
         e.preventDefault();
+
+        if (!otp || otp.length !== 6) {
+            setError('Please enter a valid 6-digit OTP');
+            return;
+        }
+
         setError('');
         setLoading(true);
 

@@ -1,5 +1,9 @@
 // Access the same OTP store
 const otpStore = globalThis.otpStore || (globalThis.otpStore = {});
+import crypto from 'crypto';
+
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_MS = 15 * 60 * 1000; // 15 minutes
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -11,6 +15,11 @@ export default async function handler(req, res) {
 
         if (!otp) {
             return res.status(400).json({ error: 'OTP is required' });
+        }
+
+        // Check for lockout
+        if (otpStore.lockUntil && Date.now() < otpStore.lockUntil) {
+            return res.status(429).json({ error: 'Too many failed attempts. Please try again later.' });
         }
 
         // Check if OTP exists and is valid
@@ -27,15 +36,27 @@ export default async function handler(req, res) {
 
         // Verify OTP
         if (otp !== otpStore.otp) {
+            otpStore.attempts = (otpStore.attempts || 0) + 1;
+
+            if (otpStore.attempts >= MAX_ATTEMPTS) {
+                otpStore.lockUntil = Date.now() + LOCKOUT_MS;
+                delete otpStore.otp;
+                delete otpStore.expiry;
+                delete otpStore.attempts;
+                return res.status(429).json({ error: 'Too many failed attempts. Account locked for 15 minutes.' });
+            }
+
             return res.status(401).json({ error: 'Invalid OTP' });
         }
 
-        // Clear OTP after successful verification
+        // Clear OTP and attempts after successful verification
         delete otpStore.otp;
         delete otpStore.expiry;
+        delete otpStore.attempts;
+        delete otpStore.lockUntil;
 
-        // Generate a simple session token
-        const sessionToken = Buffer.from(`${Date.now()}-${Math.random()}`).toString('base64');
+        // Generate a secure session token
+        const sessionToken = crypto.randomBytes(32).toString('hex');
 
         return res.status(200).json({
             success: true,
