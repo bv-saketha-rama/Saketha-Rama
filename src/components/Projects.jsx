@@ -10,7 +10,7 @@ const Projects = () => {
             <h2 className="text-2xl font-bold text-[var(--color-text)] mb-8">Projects</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {projects.map((project) => (
+                {(Array.isArray(projects) ? projects : []).map((project) => (
                     <div
                         key={project.id}
                         className="group relative p-8 bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-[2.5rem] hover:border-[var(--color-accent)] transition-all duration-500 flex flex-col h-full overflow-hidden"

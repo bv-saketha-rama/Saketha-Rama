@@ -53,7 +53,7 @@ const AdminDashboard = ({ onLogout }) => {
         setProjectForm({
             title: project.title,
             description: project.description,
-            tech: project.tech.join(', '),
+            tech: Array.isArray(project.tech) ? project.tech.join(', ') : '',
             links: project.links || { github: '', blog: '' }
         });
     };
@@ -263,13 +263,17 @@ const AdminDashboard = ({ onLogout }) => {
                                             onChange={(e) => {
                                                 const file = e.target.files[0];
                                                 if (file) {
-                                                    if (file.size > 5 * 1024 * 1024) {
-                                                        alert('File size must be less than 5MB');
+                                                    // Limit to 3MB to stay safe within localStorage limits (typically 5MB total)
+                                                    if (file.size > 3 * 1024 * 1024) {
+                                                        alert('File size must be less than 3MB');
                                                         return;
                                                     }
                                                     const reader = new FileReader();
                                                     reader.onloadend = () => {
                                                         setResume(reader.result);
+                                                    };
+                                                    reader.onerror = () => {
+                                                        alert('Failed to read file. Please try again.');
                                                     };
                                                     reader.readAsDataURL(file);
                                                 }
@@ -277,7 +281,7 @@ const AdminDashboard = ({ onLogout }) => {
                                         />
                                     </label>
                                     <p className="text-sm text-[var(--color-text-secondary)]">
-                                        Max size: 5MB (PDF only)
+                                        Max size: 3MB (PDF only)
                                         <br />This will be stored in local storage.
                                     </p>
                                 </div>
