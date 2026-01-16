@@ -6,23 +6,28 @@ const Admin = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {
-        // Check if user is already authenticated (session-based)
-        const authStatus = sessionStorage.getItem('adminAuth');
-        if (authStatus === 'true') {
+        // Check if user has a valid session token
+        const token = sessionStorage.getItem('adminToken');
+        if (token) {
             setIsAuthenticated(true);
         }
     }, []);
 
-    const handleLogin = () => {
-        sessionStorage.setItem('adminAuth', 'true');
+    const handleLogin = (token) => {
+        sessionStorage.setItem('adminToken', token);
         setIsAuthenticated(true);
+    };
+
+    const handleLogout = () => {
+        sessionStorage.removeItem('adminToken');
+        setIsAuthenticated(false);
     };
 
     if (!isAuthenticated) {
         return <AdminLogin onLogin={handleLogin} />;
     }
 
-    return <AdminDashboard />;
+    return <AdminDashboard onLogout={handleLogout} />;
 };
 
 export default Admin;

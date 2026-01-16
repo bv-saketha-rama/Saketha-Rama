@@ -1,4 +1,5 @@
 import { Github, Linkedin, Mail, Twitter, Sun, Moon } from 'lucide-react';
+import HashnodeIcon from './icons/HashnodeIcon';
 
 const Header = ({ toggleTheme, isDark }) => {
     return (
@@ -29,10 +30,7 @@ const Header = ({ toggleTheme, isDark }) => {
                             <Twitter size={18} />
                         </a>
                         <a href="https://hashnode.com/@saketha-rama" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)]" title="Hashnode">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M12 3l8 8-8 8-8-8 8-8z" />
-                                <circle cx="12" cy="12" r="3" />
-                            </svg>
+                            <HashnodeIcon size={18} />
                         </a>
                         <a href="mailto:sakethram9999@gmail.com" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)]" title="Gmail">
                             <Mail size={18} />

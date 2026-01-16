@@ -1,4 +1,5 @@
 import { Github, Linkedin, Twitter, Mail, FileText } from 'lucide-react';
+import HashnodeIcon from './icons/HashnodeIcon';
 
 const socialLinks = [
     {
@@ -27,19 +28,14 @@ const socialLinks = [
     },
     {
         name: "Hashnode",
-        icon: (
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 3l8 8-8 8-8-8 8-8z" />
-                <circle cx="12" cy="12" r="3" />
-            </svg>
-        ),
+        icon: <HashnodeIcon size={20} />,
         url: "https://hashnode.com/@saketha-rama",
         description: "Read my blogs"
     },
     {
         name: "Resume",
         icon: <FileText size={20} />,
-        url: "#",
+        url: "/resume.pdf",
         description: "Download PDF"
     }
 ];
@@ -55,13 +51,13 @@ const Connect = () => {
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {socialLinks.map((link, index) => (
+                {socialLinks.map((link) => (
                     <a
-                        key={index}
+                        key={link.name}
                         href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-3 p-4 border border-[var(--color-border)] rounded-lg hover:border-[var(--color-accent)] hover:no-underline"
+                        target={link.url.startsWith('mailto:') ? undefined : '_blank'}
+                        rel={link.url.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
+                        className="flex items-center gap-3 p-4 border border-[var(--color-border)] rounded-lg hover:border-[var(--color-accent)] hover:no-underline transition-colors"
                     >
                         <span className="text-[var(--color-accent)]">{link.icon}</span>
                         <div>
