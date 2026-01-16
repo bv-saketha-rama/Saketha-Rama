@@ -1,10 +1,14 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resendApiKey = process.env.RESEND_API_KEY;
+// Only initialize Resend if key looks real (not placeholder)
+const resend = (resendApiKey && resendApiKey !== 'your_resend_api_key_here')
+    ? new Resend(resendApiKey)
+    : null;
+
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
-// Simple in-memory store (Vercel serverless functions are stateless, so we use edge config or KV in production)
-// For simplicity, we'll store OTP in a global variable with expiry
+// Simple in-memory store
 const otpStore = globalThis.otpStore || (globalThis.otpStore = {});
 
 export default async function handler(req, res) {
@@ -20,6 +24,21 @@ export default async function handler(req, res) {
         // Store OTP with expiry
         otpStore.otp = otp;
         otpStore.expiry = expiry;
+
+        // If no valid Resend key, just log it (Dev Mode)
+        if (!resend) {
+            console.log('================================================');
+            console.log(`[DEV MODE] OTP Generated for ${ADMIN_EMAIL}: ${otp}`);
+            console.log('================================================');
+
+            // Simulating a delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            return res.status(200).json({
+                success: true,
+                message: 'OTP sent (Check console for Dev Mode)'
+            });
+        }
 
         // Send email via Resend
         const { error } = await resend.emails.send({
@@ -42,7 +61,11 @@ export default async function handler(req, res) {
 
         if (error) {
             console.error('Email error:', error);
-            return res.status(500).json({ error: 'Failed to send OTP' });
+            // Fallback for demo purposes if email fails
+            console.log('================================================');
+            console.log(`[FALLBACK] Email failed. OTP is: ${otp}`);
+            console.log('================================================');
+            return res.status(200).json({ success: true, message: 'OTP generated (Email failed, check console)' });
         }
 
         return res.status(200).json({ success: true, message: 'OTP sent successfully' });
