@@ -1,52 +1,49 @@
-import { motion } from 'framer-motion';
-
-const skills = [
-    { category: "Core Languages", items: ["JavaScript (ES6+)", "Python", "SQL", "HTML5/CSS3"] },
-    { category: "Special FX (Frameworks)", items: ["React", "Tailwind CSS", "Three.js", "Framer Motion"] },
-    { category: "Production (Tools)", items: ["Git", "Vite", "Figma", "VS Code"] },
+const skillCategories = [
+    {
+        title: "Languages / Core",
+        skills: ["Python", "Go", "C++", "C", "SQL", "Rust", "Bash"]
+    },
+    {
+        title: "AI / ML Engineering",
+        skills: ["Machine Learning", "Deep Learning", "RAG", "PyTorch", "TensorFlow", "LangChain", "LangGraph", "LLM Orchestration", "Vector Databases", "Transformers"]
+    },
+    {
+        title: "Backend & Systems",
+        skills: ["FastAPI", "Kernel Programming", "System Design", "gRPC", "REST", "GraphQL", "API Design", "Distributed Systems"]
+    },
+    {
+        title: "Data Engineering & DBs",
+        skills: ["PostgreSQL", "MongoDB", "SQLite", "Redis", "Apache Airflow", "Informatica", "Vertica", "Apache Kafka", "ETL Pipelines"]
+    },
+    {
+        title: "Infra & DevOps",
+        skills: ["Linux", "AWS (S3, EC2)", "Docker", "Kubernetes", "Jenkins", "LGTM Stack", "CI/CD", "Performance Optimization"]
+    }
 ];
 
 const Skills = () => {
     return (
-        <section className="w-full max-w-4xl py-20">
-            <div className="mb-12 flex items-center gap-4">
-                <div className="h-8 w-2 bg-racing-cyan skew-x-[-20deg]" />
-                <h2 className="font-racing text-4xl font-bold italic text-white">
-                    SETUP SHEET <span className="text-racing-red">// SKILLS</span>
-                </h2>
-            </div>
+        <section id="skills" className="py-12 border-b border-[var(--color-border)]">
+            <h2 className="text-2xl font-bold text-[var(--color-text)] mb-8">Skills</h2>
 
-            <div className="grid gap-8 md:grid-cols-3">
-                {skills.map((group, i) => (
-                    <motion.div
-                        key={i}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.1 }}
-                        className="border border-racing-cyan/20 bg-racing-asphalt p-6"
-                    >
-                        <h3 className="mb-6 font-racing text-sm text-racing-cyan">
-                            {group.category.toUpperCase()}
+            <div className="grid md:grid-cols-2 gap-8">
+                {skillCategories.map((category, index) => (
+                    <div key={index} className="group">
+                        <h3 className="font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
+                            <span className="w-1 h-4 bg-[var(--color-accent)] rounded-full"></span>
+                            {category.title}
                         </h3>
-                        <div className="space-y-4">
-                            {group.items.map((skill, j) => (
-                                <div key={j} className="space-y-1">
-                                    <div className="flex justify-between text-xs font-bold text-white">
-                                        <span>{skill}</span>
-                                        <span>{Math.floor(Math.random() * 20 + 80)}%</span>
-                                    </div>
-                                    <div className="h-1 w-full bg-gray-800">
-                                        <motion.div
-                                            initial={{ width: 0 }}
-                                            whileInView={{ width: `${Math.random() * 20 + 80}%` }}
-                                            transition={{ duration: 1, delay: 0.5 + j * 0.1 }}
-                                            className="h-full bg-racing-red"
-                                        />
-                                    </div>
-                                </div>
+                        <div className="flex flex-wrap gap-2">
+                            {category.skills.map((skill, i) => (
+                                <span
+                                    key={i}
+                                    className="px-4 py-2 text-sm bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-2xl text-[var(--color-text-secondary)] hover:border-[var(--color-accent)] hover:text-[var(--color-text)] transition-all duration-300 cursor-default"
+                                >
+                                    {skill}
+                                </span>
                             ))}
                         </div>
-                    </motion.div>
+                    </div>
                 ))}
             </div>
         </section>
