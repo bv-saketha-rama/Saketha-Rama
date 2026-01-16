@@ -39,7 +39,7 @@ const experiences = [
     },
     {
         timerange: "2020 - 2024",
-        company: "IIITDM Kancheepuram",
+        company: "Indian Institute of Information Technology, Design & Manufacturing, Kancheepuram",
         type: "education",
         roles: [
             {
