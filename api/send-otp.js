@@ -1,17 +1,13 @@
 import { Resend } from 'resend';
+import { kv } from '@vercel/kv';
 import crypto from 'crypto';
 
 const resendApiKey = process.env.RESEND_API_KEY;
-// Only initialize Resend if key looks real (not placeholder)
 const resend = (resendApiKey && resendApiKey !== 'your_resend_api_key_here')
     ? new Resend(resendApiKey)
     : null;
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
-
-// Simple in-memory store
-const otpStore = globalThis.otpStore || (globalThis.otpStore = {});
-const otpThrottle = globalThis.otpThrottle || (globalThis.otpThrottle = new Map());
 const COOLDOWN_MS = 60000; // 60 seconds
 
 export default async function handler(req, res) {
@@ -29,27 +25,30 @@ export default async function handler(req, res) {
             clientIp = forwarded;
         }
     }
-
-    // Fallback to ensure we have a string
     clientIp = clientIp || 'unknown';
 
-    const lastSent = otpThrottle.get(clientIp);
-
-    if (lastSent && Date.now() - lastSent < COOLDOWN_MS) {
-        return res.status(429).json({ error: 'Too many requests, try again later' });
-    }
-
     try {
+        // Rate Limiting via KV
+        const throttleKey = `otp_throttle:${clientIp}`;
+        const isThrottled = await kv.exists(throttleKey);
+
+        if (isThrottled) {
+            return res.status(429).json({ error: 'Too many requests, try again later' });
+        }
+
         // Generate secure 6-digit OTP
         const otp = crypto.randomInt(100000, 1000000).toString();
-        const expiry = Date.now() + 5 * 60 * 1000; // 5 minutes
 
-        // Store OTP with expiry
-        otpStore.otp = otp;
-        otpStore.expiry = expiry;
+        // Store OTP in KV with 5 minute expiration
+        // Key: otp_val:<otp> -> Value: <admin_email>? Or typically verify against something known.
+        // Actually, we usually store the OTP *for the user/session*.
+        // Since this is a single admin login, we can store it under a fixed key "admin_otp" 
+        // OR better, allow concurrent requests but validate specifically.
+        // For simple admin: `admin_otp` key is fine.
+        await kv.set('admin_otp', otp, { ex: 300 }); // 5 mins
 
-        // Update throttle
-        otpThrottle.set(clientIp, Date.now());
+        // Set throttle for IP (60s)
+        await kv.set(throttleKey, '1', { ex: 60 });
 
         // If no valid Resend key, just log it (Dev Mode)
         if (!resend) {
@@ -65,6 +64,7 @@ export default async function handler(req, res) {
                 message: 'OTP sent (Check console for Dev Mode)'
             });
         }
+
 
         // Send email via Resend
         const { error } = await resend.emails.send({

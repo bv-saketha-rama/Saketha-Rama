@@ -1,9 +1,9 @@
-// Access the same OTP store
-const otpStore = globalThis.otpStore || (globalThis.otpStore = {});
+// Use Vercel KV
+import { kv } from '@vercel/kv';
 import crypto from 'crypto';
 
 const MAX_ATTEMPTS = 5;
-const LOCKOUT_MS = 15 * 60 * 1000; // 15 minutes
+const LOCKOUT_MS = 15 * 60; // 15 minutes in seconds for KV
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -18,31 +18,32 @@ export default async function handler(req, res) {
         }
 
         // Check for lockout
-        if (otpStore.lockUntil && Date.now() < otpStore.lockUntil) {
+        const isLocked = await kv.exists('admin_lockout');
+        if (isLocked) {
             return res.status(429).json({ error: 'Too many failed attempts. Please try again later.' });
         }
 
-        // Check if OTP exists and is valid
-        if (!otpStore.otp || !otpStore.expiry) {
-            return res.status(400).json({ error: 'No OTP requested. Please request a new one.' });
-        }
+        // Retrieve stored OTP
+        const storedOtp = await kv.get('admin_otp');
 
-        // Check expiry
-        if (Date.now() > otpStore.expiry) {
-            delete otpStore.otp;
-            delete otpStore.expiry;
-            return res.status(400).json({ error: 'OTP has expired. Please request a new one.' });
+        // Check if OTP exists
+        if (!storedOtp) {
+            return res.status(400).json({ error: 'OTP expired or not requested. Request a new one.' });
         }
 
         // Verify OTP
-        if (otp !== otpStore.otp) {
-            otpStore.attempts = (otpStore.attempts || 0) + 1;
+        // Ensure string comparison
+        if (String(otp) !== String(storedOtp)) {
+            // Increment attempts
+            const attempts = await kv.incr('admin_otp_attempts');
+            // Set expiry on attempts key if new (e.g., 15 mins window)
+            if (attempts === 1) await kv.expire('admin_otp_attempts', 900);
 
-            if (otpStore.attempts >= MAX_ATTEMPTS) {
-                otpStore.lockUntil = Date.now() + LOCKOUT_MS;
-                delete otpStore.otp;
-                delete otpStore.expiry;
-                delete otpStore.attempts;
+            if (attempts >= MAX_ATTEMPTS) {
+                // Lockout
+                await kv.set('admin_lockout', 'true', { ex: LOCKOUT_MS });
+                await kv.del('admin_otp');
+                await kv.del('admin_otp_attempts');
                 return res.status(429).json({ error: 'Too many failed attempts. Account locked for 15 minutes.' });
             }
 
@@ -50,13 +51,17 @@ export default async function handler(req, res) {
         }
 
         // Clear OTP and attempts after successful verification
-        delete otpStore.otp;
-        delete otpStore.expiry;
-        delete otpStore.attempts;
-        delete otpStore.lockUntil;
+        await kv.del('admin_otp');
+        await kv.del('admin_otp_attempts');
+        await kv.del('admin_lockout'); // Clear lockout just in case
 
         // Generate a secure session token
         const sessionToken = crypto.randomBytes(32).toString('hex');
+
+        // Store session token for 1 hour (3600 seconds)
+        // We can verify this token in middleware later
+        await kv.set(`session:${sessionToken}`, 'valid', { ex: 3600 });
+
 
         return res.status(200).json({
             success: true,

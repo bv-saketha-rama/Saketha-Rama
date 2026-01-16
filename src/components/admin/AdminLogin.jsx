@@ -25,7 +25,7 @@ const AdminLogin = ({ onLogin }) => {
                 throw new Error(data.error || 'Failed to send OTP');
             }
 
-            setMessage('OTP sent to your email!');
+            setMessage(data.message || 'OTP sent to your email!');
             setStep('verify');
         } catch (err) {
             setError(err.message);
