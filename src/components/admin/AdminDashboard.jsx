@@ -8,6 +8,8 @@ const AdminDashboard = ({ onLogout }) => {
     const {
         projects,
         blogs,
+        resume,
+        setResume,
         addProject,
         updateProject,
         deleteProject,
@@ -117,16 +119,16 @@ const AdminDashboard = ({ onLogout }) => {
             <main className="max-w-6xl mx-auto px-6 py-8">
                 {/* Tabs */}
                 <div className="flex gap-4 mb-8">
-                    {['projects', 'blogs'].map(tab => (
+                    {['projects', 'blogs', 'resume'].map(tab => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             className={`px-6 py-3 rounded-2xl font-medium transition-all capitalize ${activeTab === tab
-                                    ? 'bg-[var(--color-accent)] text-white'
-                                    : 'bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--color-accent)]'
+                                ? 'bg-[var(--color-accent)] text-white'
+                                : 'bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--color-accent)]'
                                 }`}
                         >
-                            {tab} ({tab === 'projects' ? projects.length : blogs.length})
+                            {tab} ({tab === 'projects' ? projects.length : tab === 'blogs' ? blogs.length : (resume ? 1 : 0)})
                         </button>
                     ))}
                 </div>
@@ -219,6 +221,67 @@ const AdminDashboard = ({ onLogout }) => {
                                     />
                                 )
                             ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Resume Tab */}
+                {activeTab === 'resume' && (
+                    <div className="space-y-6">
+                        <h2 className="text-xl font-bold text-[var(--color-text)]">Manage Resume</h2>
+
+                        <div className="bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-2xl p-8 flex flex-col items-center justify-center text-center">
+                            {resume ? (
+                                <div className="space-y-4">
+                                    <div className="p-4 bg-green-500/10 text-green-500 rounded-xl flex items-center justify-center gap-2">
+                                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                                        Resume is currently uploaded
+                                    </div>
+                                    <div className="flex gap-4 justify-center">
+                                        <a href={resume} target="_blank" rel="noopener noreferrer" className={btnSecondary}>
+                                            Preview Resume
+                                        </a>
+                                        <button
+                                            onClick={() => { if (window.confirm('Delete resume?')) setResume(null); }}
+                                            className={`${btnSecondary} text-red-500 hover:border-red-500`}
+                                        >
+                                            Delete Resume
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    <div className="p-4 bg-yellow-500/10 text-yellow-500 rounded-xl">
+                                        No resume uploaded
+                                    </div>
+                                    <label className={`cursor-pointer ${btnPrimary} flex items-center gap-2`}>
+                                        <Plus size={20} /> Upload PDF
+                                        <input
+                                            type="file"
+                                            accept="application/pdf"
+                                            className="hidden"
+                                            onChange={(e) => {
+                                                const file = e.target.files[0];
+                                                if (file) {
+                                                    if (file.size > 5 * 1024 * 1024) {
+                                                        alert('File size must be less than 5MB');
+                                                        return;
+                                                    }
+                                                    const reader = new FileReader();
+                                                    reader.onloadend = () => {
+                                                        setResume(reader.result);
+                                                    };
+                                                    reader.readAsDataURL(file);
+                                                }
+                                            }}
+                                        />
+                                    </label>
+                                    <p className="text-sm text-[var(--color-text-secondary)]">
+                                        Max size: 5MB (PDF only)
+                                        <br />This will be stored in local storage.
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}

@@ -19,7 +19,20 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    // IP Detection with proxy safety
+    const trustProxy = process.env.TRUST_PROXY === 'true';
+    let clientIp = req.socket.remoteAddress;
+
+    if (trustProxy && req.headers['x-forwarded-for']) {
+        const forwarded = req.headers['x-forwarded-for'].split(',')[0].trim();
+        if (forwarded) {
+            clientIp = forwarded;
+        }
+    }
+
+    // Fallback to ensure we have a string
+    clientIp = clientIp || 'unknown';
+
     const lastSent = otpThrottle.get(clientIp);
 
     if (lastSent && Date.now() - lastSent < COOLDOWN_MS) {

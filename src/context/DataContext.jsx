@@ -14,8 +14,7 @@ export const useData = () => {
 };
 
 export const DataProvider = ({ children }) => {
-    const [projects, setProjects] = useLocalStorage('portfolio-projects', defaultProjects);
-    const [blogs, setBlogs] = useLocalStorage('portfolio-blogs', defaultBlogs);
+    const [resume, setResume] = useLocalStorage('portfolio-resume', null);
 
     // Projects CRUD
     const addProject = (project) => {
@@ -50,6 +49,8 @@ export const DataProvider = ({ children }) => {
     const value = {
         projects,
         blogs,
+        resume,
+        setResume,
         addProject,
         updateProject,
         deleteProject,

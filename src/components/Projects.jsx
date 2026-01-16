@@ -26,6 +26,7 @@ const Projects = () => {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
+                                        aria-label={`View ${project.title} on GitHub`}
                                     >
                                         <Github size={20} />
                                     </a>
@@ -36,6 +37,7 @@ const Projects = () => {
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
+                                        aria-label={`Read blog about ${project.title}`}
                                     >
                                         <HashnodeIcon size={20} />
                                     </a>
