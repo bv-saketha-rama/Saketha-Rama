@@ -8,14 +8,7 @@ const HashnodeIcon = ({ size = 20, className = "" }) => {
             xmlns="http://www.w3.org/2000/svg"
             className={className}
         >
-            <rect
-                x="113"
-                y="113"
-                width="111"
-                height="111"
-                rx="55.5"
-                fill="currentColor"
-            />
+
             <path
                 fillRule="evenodd"
                 clipRule="evenodd"
