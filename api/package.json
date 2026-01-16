@@ -1,0 +1,10 @@
+{
+    "name": "api",
+    "version": "1.0.0",
+    "description": "Serverless functions for Portfolio Admin",
+    "main": "index.js",
+    "type": "module",
+    "dependencies": {
+        "resend": "^3.2.0"
+    }
+}
