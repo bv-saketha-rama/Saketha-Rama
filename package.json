@@ -14,6 +14,7 @@
     "@react-three/drei": "^9.107.0",
     "@react-three/fiber": "^8.16.8",
     "@types/three": "^0.181.0",
+    "@vercel/kv": "^3.0.0",
     "clsx": "^2.1.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
