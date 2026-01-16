@@ -15,7 +15,14 @@ const Projects = () => {
                         key={project.id}
                         className="group relative p-8 bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-[2.5rem] hover:border-[var(--color-accent)] transition-all duration-500 flex flex-col h-full overflow-hidden"
                     >
-                        <div className="flex items-start justify-between mb-4">
+                        {/* Coming Soon Badge */}
+                        {project.comingSoon && (
+                            <div className="absolute top-4 right-4 px-3 py-1 text-[10px] font-mono tracking-wider uppercase bg-[var(--color-accent)] text-white rounded-full">
+                                Coming Soon
+                            </div>
+                        )}
+
+                        <div className="flex items-start justify-between mb-4 pr-24">
                             <h3 className="text-xl font-bold text-[var(--color-text)] group-hover:text-[var(--color-accent)] transition-colors">
                                 {project.title}
                             </h3>
@@ -41,9 +48,18 @@ const Projects = () => {
                             </div>
                         </div>
 
-                        <p className="text-[var(--color-text-secondary)] mb-6 leading-relaxed flex-grow">
-                            {project.description}
-                        </p>
+                        {/* Description - supports both plain text and bullet points */}
+                        {project.descriptionPoints ? (
+                            <ul className="text-[var(--color-text-secondary)] mb-6 leading-relaxed flex-grow space-y-2 list-disc list-inside">
+                                {project.descriptionPoints.map((point, i) => (
+                                    <li key={i}>{point}</li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="text-[var(--color-text-secondary)] mb-6 leading-relaxed flex-grow">
+                                {project.description}
+                            </p>
+                        )}
 
                         <div className="flex flex-wrap gap-2 pt-4 border-t border-[var(--color-border)] border-opacity-50">
                             {(Array.isArray(project.tech) ? project.tech : []).map((tech, i) => (

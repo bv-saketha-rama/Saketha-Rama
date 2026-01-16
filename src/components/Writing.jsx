@@ -41,7 +41,7 @@ const Writing = () => {
                             )}
                         </h3>
 
-                        <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed line-clamp-3 flex-grow">
+                        <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed flex-grow">
                             {post.description}
                         </p>
 

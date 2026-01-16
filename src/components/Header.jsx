@@ -79,21 +79,21 @@ const Header = ({ toggleTheme, isDark }) => {
 
             {/* Mobile Navigation Overlay */}
             {isMobileNavOpen && (
-                <div className="fixed inset-0 z-40 bg-[var(--color-bg)] flex flex-col justify-center items-center xl:hidden mt-16">
-                    <div className="flex flex-col items-center gap-8 p-6 w-full" role="menu">
+                <div className="fixed inset-0 top-[73px] z-[9999] bg-[var(--color-bg)] flex flex-col items-center pt-8 xl:hidden overflow-y-auto">
+                    <div className="flex flex-col items-center gap-6 p-6 w-full max-w-md" role="menu">
                         {navLinks.map(link => (
                             <a
                                 key={link.href}
                                 href={link.href}
                                 onClick={closeMobileNav}
-                                className="text-xl font-medium text-[var(--color-text)] hover:text-[var(--color-accent)] transition-colors"
+                                className="text-lg font-medium text-[var(--color-text)] hover:text-[var(--color-accent)] transition-colors"
                                 role="menuitem"
                             >
                                 {link.label}
                             </a>
                         ))}
 
-                        <div className="flex gap-6 mt-8 pt-8 border-t border-[var(--color-border)] w-full justify-center">
+                        <div className="flex gap-6 mt-6 pt-6 border-t border-[var(--color-border)] w-full justify-center">
                             <a href="https://github.com/bv-saketha-rama" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)]" title="GitHub">
                                 <Github size={24} />
                             </a>
