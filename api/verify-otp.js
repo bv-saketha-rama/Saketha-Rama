@@ -42,8 +42,7 @@ export default async function handler(req, res) {
             if (attempts >= MAX_ATTEMPTS) {
                 // Lockout
                 await kv.set('admin_lockout', 'true', { ex: LOCKOUT_MS });
-                await kv.del('admin_otp');
-                await kv.del('admin_otp_attempts');
+                await kv.del('admin_otp', 'admin_otp_attempts');
                 return res.status(429).json({ error: 'Too many failed attempts. Account locked for 15 minutes.' });
             }
 
