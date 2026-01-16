@@ -39,14 +39,12 @@ export default async function handler(req, res) {
         // Generate secure 6-digit OTP
         const otp = crypto.randomInt(100000, 1000000).toString();
 
-        // Store OTP in KV with 5 minute expiration
-        await kv.set('admin_otp', otp, { ex: 300 }); // 5 mins
-
-        // Set throttle for IP (60s)
-        await kv.set(throttleKey, '1', { ex: 60 });
-
         // If no valid Resend key, just log it (Dev Mode)
         if (!resend) {
+            // Write to KV before returning in Dev Mode
+            await kv.set('admin_otp', otp, { ex: 300 }); // 5 mins
+            await kv.set(throttleKey, '1', { ex: 60 });
+
             console.log('================================================');
             console.log(`[DEV MODE] OTP Generated for ${ADMIN_EMAIL}: ${otp}`);
             console.log('================================================');
@@ -82,12 +80,20 @@ export default async function handler(req, res) {
 
         if (error) {
             console.error('Email error:', error);
-            // Fallback for demo purposes if email fails
+            // Fallback: If email fails, we log it, so we SHOULD still persist the OTP and throttle
+            // because the admin can technically still access it via logs.
+            await kv.set('admin_otp', otp, { ex: 300 });
+            await kv.set(throttleKey, '1', { ex: 60 });
+
             console.log('================================================');
             console.log(`[FALLBACK] Email failed. OTP is: ${otp}`);
             console.log('================================================');
             return res.status(200).json({ success: true, message: 'OTP generated (Email failed, check console)' });
         }
+
+        // Success path: Store OTP and Throttle
+        await kv.set('admin_otp', otp, { ex: 300 }); // 5 mins
+        await kv.set(throttleKey, '1', { ex: 60 });
 
         return res.status(200).json({ success: true, message: 'OTP sent successfully' });
     } catch (error) {

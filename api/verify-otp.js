@@ -3,7 +3,7 @@ import { kv } from '@vercel/kv';
 import crypto from 'crypto';
 
 const MAX_ATTEMPTS = 5;
-const LOCKOUT_MS = 15 * 60; // 15 minutes in seconds for KV
+const LOCKOUT_SEC = 15 * 60; // 15 minutes in seconds
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -41,7 +41,7 @@ export default async function handler(req, res) {
 
             if (attempts >= MAX_ATTEMPTS) {
                 // Lockout
-                await kv.set('admin_lockout', 'true', { ex: LOCKOUT_MS });
+                await kv.set('admin_lockout', 'true', { ex: LOCKOUT_SEC });
                 await kv.del('admin_otp', 'admin_otp_attempts');
                 return res.status(429).json({ error: 'Too many failed attempts. Account locked for 15 minutes.' });
             }
