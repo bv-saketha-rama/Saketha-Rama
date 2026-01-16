@@ -40,11 +40,6 @@ export default async function handler(req, res) {
         const otp = crypto.randomInt(100000, 1000000).toString();
 
         // Store OTP in KV with 5 minute expiration
-        // Key: otp_val:<otp> -> Value: <admin_email>? Or typically verify against something known.
-        // Actually, we usually store the OTP *for the user/session*.
-        // Since this is a single admin login, we can store it under a fixed key "admin_otp" 
-        // OR better, allow concurrent requests but validate specifically.
-        // For simple admin: `admin_otp` key is fine.
         await kv.set('admin_otp', otp, { ex: 300 }); // 5 mins
 
         // Set throttle for IP (60s)
