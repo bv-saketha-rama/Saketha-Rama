@@ -1,8 +1,12 @@
+import { Github } from 'lucide-react';
+import HashnodeIcon from './icons/HashnodeIcon';
+
 const contributions = [
     {
         project: "facebook/pyrefly",
         title: "LSP Navigation Improvement",
         link: "https://github.com/facebook/pyrefly/pull/1981",
+        blog: null,
         bullets: [
             "Fixed Language Server Protocol (LSP) behavior where 'go-to declaration' incorrectly skipped import statements.",
             "Implemented module binding support by respecting ImportBehavior::StopAtEverything for module definitions.",
@@ -13,6 +17,7 @@ const contributions = [
         project: "rocketmq-rust",
         title: "Reliability & Error Handling",
         link: "https://github.com/mxsm/rocketmq-rust/pull/5462",
+        blog: null,
         bullets: [
             "Identified and eliminated potential runtime panics in the send_oneway_to_queue method.",
             "Replaced unsafe .unwrap() calls with robust error handling using .ok_or() and RocketMQError types.",
@@ -23,6 +28,7 @@ const contributions = [
         project: "go-rest-api-boilerplate",
         title: "Architectural Refactoring",
         link: "https://github.com/vahiiiid/go-rest-api-boilerplate/pull/29",
+        blog: null,
         bullets: [
             "Introduced a type-safe context helper package for the Gin framework to abstract JWT user extraction.",
             "Reduced repetitive boilerplate code across protected API handlers by over 40%.",
@@ -51,16 +57,30 @@ const OpenSource = () => {
                                     {item.title}
                                 </p>
                             </div>
-                            <a
-                                href={item.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="p-3 rounded-full bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-accent)] hover:scale-110 transition-transform"
-                                title="View on GitHub"
-                                aria-label={`View ${item.title} on GitHub`}
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg>
-                            </a>
+                            <div className="flex gap-3">
+                                <a
+                                    href={item.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
+                                    title="View PR on GitHub"
+                                    aria-label={`View PR for ${item.title} on GitHub`}
+                                >
+                                    <Github size={20} />
+                                </a>
+                                {item.blog && (
+                                    <a
+                                        href={item.blog}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
+                                        title="Read blog"
+                                        aria-label={`Read blog about ${item.title}`}
+                                    >
+                                        <HashnodeIcon size={20} />
+                                    </a>
+                                )}
+                            </div>
                         </div>
 
                         <ul className="space-y-3 mt-auto">

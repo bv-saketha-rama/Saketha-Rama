@@ -28,7 +28,7 @@ const Writing = () => {
                                     className="text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
                                     aria-label={`Read ${post.title} on Hashnode`}
                                 >
-                                    <HashnodeIcon size={18} />
+                                    <HashnodeIcon size={20} />
                                 </a>
                             )}
                         </div>
