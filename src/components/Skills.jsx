@@ -17,7 +17,7 @@ const skillCategories = [
     },
     {
         title: "Infra & DevOps",
-        skills: ["Linux", "AWS (S3, EC2)", "Docker", "Kubernetes", "Jenkins", "LGTM Stack", "CI/CD", "Performance Optimization"]
+        skills: ["Linux", "AWS", "GCP", "Azure", "Docker", "Kubernetes", "Jenkins", "LGTM Stack", "CI/CD", "Performance Optimization"]
     }
 ];
 

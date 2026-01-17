@@ -1,5 +1,6 @@
-import { Github, Linkedin, Twitter, Mail } from 'lucide-react';
+import { Github, Linkedin, Twitter, Mail, FileText } from 'lucide-react';
 import HashnodeIcon from './icons/HashnodeIcon';
+import LeetCodeIcon from './icons/LeetCodeIcon';
 
 const socialLinks = [
     {
@@ -7,6 +8,18 @@ const socialLinks = [
         icon: <Github size={20} />,
         url: "https://github.com/bv-saketha-rama",
         description: "Check out my code"
+    },
+    {
+        name: "Resume",
+        icon: <FileText size={20} />,
+        url: "https://drive.google.com/file/d/1m6jIYbU_qrYiGd7D4E_2xWTlKXHCJHEN/view?usp=sharing",
+        description: "Check out my Resume"
+    },
+    {
+        name: "LeetCode",
+        icon: <LeetCodeIcon size={20} />,
+        url: "https://leetcode.com/u/bv-saketha-rama/",
+        description: "check out my DSA skills"
     },
     {
         name: "LinkedIn",
@@ -66,3 +79,4 @@ const Connect = () => {
 };
 
 export default Connect;
+

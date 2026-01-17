@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Github, Linkedin, Mail, Twitter, Sun, Moon, Menu, X } from 'lucide-react';
+import { Github, Linkedin, Mail, Twitter, Sun, Moon, Menu, X, FileText } from 'lucide-react';
 import HashnodeIcon from './icons/HashnodeIcon';
+import LeetCodeIcon from './icons/LeetCodeIcon';
 
 const Header = ({ toggleTheme, isDark }) => {
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
@@ -43,6 +44,9 @@ const Header = ({ toggleTheme, isDark }) => {
                         <a href="https://github.com/bv-saketha-rama" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hidden sm:block" title="GitHub">
                             <Github size={18} />
                         </a>
+                        <a href="https://leetcode.com/u/bv-saketha-rama/" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hidden sm:block" title="LeetCode">
+                            <LeetCodeIcon size={18} />
+                        </a>
                         <a href="https://www.linkedin.com/in/saketha-rama-5b93a81b9/" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hidden sm:block" title="LinkedIn">
                             <Linkedin size={18} />
                         </a>
@@ -54,6 +58,9 @@ const Header = ({ toggleTheme, isDark }) => {
                         </a>
                         <a href="mailto:sakethram9999@gmail.com" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hidden sm:block" title="Gmail">
                             <Mail size={18} />
+                        </a>
+                        <a href="https://drive.google.com/file/d/1m6jIYbU_qrYiGd7D4E_2xWTlKXHCJHEN/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hidden sm:block" title="Resume">
+                            <FileText size={18} />
                         </a>
 
                         <button
@@ -79,7 +86,7 @@ const Header = ({ toggleTheme, isDark }) => {
 
             {/* Mobile Navigation Overlay */}
             {isMobileNavOpen && (
-                <div className="fixed inset-0 top-[73px] z-[9999] bg-[var(--color-bg)] flex flex-col items-center pt-8 xl:hidden overflow-y-auto">
+                <div className="fixed left-0 right-0 bottom-0 top-[73px] z-[9999] bg-[var(--color-bg)] flex flex-col items-center pt-8 xl:hidden overflow-y-auto" style={{ height: 'calc(100vh - 73px)' }}>
                     <div className="flex flex-col items-center gap-6 p-6 w-full max-w-md" role="menu">
                         {navLinks.map(link => (
                             <a
@@ -93,9 +100,12 @@ const Header = ({ toggleTheme, isDark }) => {
                             </a>
                         ))}
 
-                        <div className="flex gap-6 mt-6 pt-6 border-t border-[var(--color-border)] w-full justify-center">
+                        <div className="flex flex-wrap gap-6 mt-6 pt-6 border-t border-[var(--color-border)] w-full justify-center">
                             <a href="https://github.com/bv-saketha-rama" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)]" title="GitHub">
                                 <Github size={24} />
+                            </a>
+                            <a href="https://leetcode.com/u/bv-saketha-rama/" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)]" title="LeetCode">
+                                <LeetCodeIcon size={24} />
                             </a>
                             <a href="https://www.linkedin.com/in/saketha-rama-5b93a81b9/" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)]" title="LinkedIn">
                                 <Linkedin size={24} />
@@ -108,6 +118,9 @@ const Header = ({ toggleTheme, isDark }) => {
                             </a>
                             <a href="mailto:sakethram9999@gmail.com" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)]" title="Gmail">
                                 <Mail size={24} />
+                            </a>
+                            <a href="https://drive.google.com/file/d/1m6jIYbU_qrYiGd7D4E_2xWTlKXHCJHEN/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)]" title="Resume">
+                                <FileText size={24} />
                             </a>
                         </div>
                     </div>
