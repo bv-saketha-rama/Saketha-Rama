@@ -18,7 +18,7 @@ const experiences = [
                 ]
             }
         ],
-        tech: ["Linux", "Git", "Python", "FastAPI", "CI/CD", "Docker"],
+        tech: ["Linux", "Git", "Python", "FastAPI", "CI/CD", "Docker", "RabbitMQ"],
         type: "work"
     },
     {

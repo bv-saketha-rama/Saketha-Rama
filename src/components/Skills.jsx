@@ -9,7 +9,7 @@ const skillCategories = [
     },
     {
         title: "Backend & Systems",
-        skills: ["FastAPI", "Kernel Programming", "System Design", "gRPC", "REST", "GraphQL", "API Design", "Distributed Systems"]
+        skills: ["FastAPI", "Messaging Queues", "Kernel Programming", "System Design", "gRPC", "REST", "GraphQL", "API Design", "Distributed Systems"]
     },
     {
         title: "Data Engineering & DBs",
