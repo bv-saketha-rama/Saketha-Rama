@@ -1,128 +1,110 @@
-import { useState } from 'react';
-import { Github, Linkedin, Mail, Twitter, Sun, Moon, Menu, X, FileText } from 'lucide-react';
-import HashnodeIcon from './icons/HashnodeIcon';
-import LeetCodeIcon from './icons/LeetCodeIcon';
+import { useEffect, useState } from 'react';
+import { Menu, X } from 'lucide-react';
+import SocialIcon from './icons/SocialIcon';
+import { socialLinks, isExternal } from '../data/socialLinks';
 
-const Header = ({ toggleTheme, isDark }) => {
+const navLinks = [
+    { href: '#about', label: 'About Me' },
+    { href: '#experience', label: 'Experience & Education' },
+    { href: '#opensource', label: 'Open Source Contributions' },
+    { href: '#projects', label: 'Projects' },
+    { href: '#writing', label: 'Writing' },
+    { href: '#research', label: 'Research' },
+];
+
+const Header = () => {
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+    const [active, setActive] = useState('#about');
 
-    const toggleMobileNav = () => setIsMobileNavOpen(!isMobileNavOpen);
+    useEffect(() => {
+        const sections = navLinks.map((l) => document.querySelector(l.href)).filter(Boolean);
+        const io = new IntersectionObserver(
+            (entries) => {
+                for (const e of entries) if (e.isIntersecting) setActive(`#${e.target.id}`);
+            },
+            { rootMargin: '-45% 0px -50% 0px' },
+        );
+        sections.forEach((s) => io.observe(s));
+        return () => io.disconnect();
+    }, []);
+
+    useEffect(() => {
+        document.body.style.overflow = isMobileNavOpen ? 'hidden' : '';
+        const onKey = (e) => e.key === 'Escape' && setIsMobileNavOpen(false);
+        window.addEventListener('keydown', onKey);
+        return () => {
+            document.body.style.overflow = '';
+            window.removeEventListener('keydown', onKey);
+        };
+    }, [isMobileNavOpen]);
 
     const closeMobileNav = () => setIsMobileNavOpen(false);
 
-    const navLinks = [
-        { href: "#about", label: "About Me" },
-        { href: "#experience", label: "Experience & Education" },
-        { href: "#opensource", label: "Open Source Contributions" },
-        { href: "#projects", label: "Projects" },
-        { href: "#writing", label: "Writing" },
-        { href: "#research", label: "Research" }
-    ];
-
     return (
-        <header className="sticky top-0 z-50 bg-[var(--color-bg)] border-b border-[var(--color-border)] backdrop-blur-sm bg-opacity-80">
-            <nav className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4 md:gap-12">
-                <a href="/" className="font-bold text-xl text-[var(--color-text)] hover:no-underline whitespace-nowrap z-50">
+        <header className="sticky top-0 z-50 h-[var(--header-h)] bg-bg border-b border-line">
+            <nav className="max-w-page h-full mx-auto px-[var(--gutter)] flex items-center justify-between gap-8" aria-label="Primary">
+                <a href="#about" className="font-display font-bold text-[1.05rem] tracking-[-0.02em] text-ink whitespace-nowrap">
                     Saketha Rama
                 </a>
 
-                <div className="flex items-center gap-2 md:gap-8">
-                    {/* Desktop Navigation */}
-                    <div className="hidden xl:flex items-center gap-6">
-                        {navLinks.map(link => (
+                <ul className="hidden xl:flex items-center gap-7">
+                    {navLinks.map((link) => (
+                        <li key={link.href}>
                             <a
-                                key={link.href}
                                 href={link.href}
-                                className="text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text)] whitespace-nowrap"
+                                aria-current={active === link.href ? 'true' : undefined}
+                                className={`nav-link text-sm whitespace-nowrap ${active === link.href ? 'text-ink' : 'text-muted hover:text-ink'}`}
                             >
                                 {link.label}
                             </a>
-                        ))}
-                    </div>
+                        </li>
+                    ))}
+                </ul>
 
-                    <div className="flex items-center gap-2 sm:gap-3 border-l border-[var(--color-border)] pl-3 sm:pl-4 z-50">
-                        <a href="https://github.com/bv-saketha-rama" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hidden sm:block" title="GitHub">
-                            <Github size={18} />
-                        </a>
-                        <a href="https://leetcode.com/u/bv-saketha-rama/" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hidden sm:block" title="LeetCode">
-                            <LeetCodeIcon size={18} />
-                        </a>
-                        <a href="https://www.linkedin.com/in/saketha-rama-5b93a81b9/" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hidden sm:block" title="LinkedIn">
-                            <Linkedin size={18} />
-                        </a>
-                        <a href="https://x.com/SakethaRama1809" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hidden sm:block" title="X (Twitter)">
-                            <Twitter size={18} />
-                        </a>
-                        <a href="https://hashnode.com/@saketha-rama" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hidden sm:block" title="Hashnode">
-                            <HashnodeIcon size={18} />
-                        </a>
-                        <a href="mailto:sakethram9999@gmail.com" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hidden sm:block" title="Gmail">
-                            <Mail size={18} />
-                        </a>
-                        <a href="https://drive.google.com/file/d/1m6jIYbU_qrYiGd7D4E_2xWTlKXHCJHEN/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hidden sm:block" title="Resume">
-                            <FileText size={18} />
-                        </a>
-
-                        <button
-                            onClick={toggleTheme}
-                            className="p-2 ml-1 sm:ml-2 rounded-full hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
-                            aria-label="Toggle Theme"
-                        >
-                            {isDark ? <Sun size={18} /> : <Moon size={18} />}
-                        </button>
-
-                        {/* Hamburger Button */}
-                        <button
-                            onClick={toggleMobileNav}
-                            className="p-2 ml-1 sm:ml-2 rounded-full xl:hidden hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
-                            aria-label={isMobileNavOpen ? "Close menu" : "Open menu"}
-                            aria-expanded={isMobileNavOpen}
-                        >
-                            {isMobileNavOpen ? <X size={24} /> : <Menu size={24} />}
-                        </button>
-                    </div>
-                </div>
+                <button
+                    type="button"
+                    onClick={() => setIsMobileNavOpen((v) => !v)}
+                    className="xl:hidden -mr-2 p-2 rounded-full text-muted hover:text-ink"
+                    aria-label={isMobileNavOpen ? 'Close menu' : 'Open menu'}
+                    aria-expanded={isMobileNavOpen}
+                    aria-controls="mobile-nav"
+                >
+                    {isMobileNavOpen ? <X size={22} /> : <Menu size={22} />}
+                </button>
             </nav>
 
-            {/* Mobile Navigation Overlay */}
             {isMobileNavOpen && (
-                <div className="fixed left-0 right-0 bottom-0 top-[73px] z-[9999] bg-[var(--color-bg)] flex flex-col items-center pt-8 xl:hidden overflow-y-auto" style={{ height: 'calc(100vh - 73px)' }}>
-                    <div className="flex flex-col items-center gap-6 p-6 w-full max-w-md" role="menu">
-                        {navLinks.map(link => (
-                            <a
-                                key={link.href}
-                                href={link.href}
-                                onClick={closeMobileNav}
-                                className="text-lg font-medium text-[var(--color-text)] hover:text-[var(--color-accent)] transition-colors"
-                                role="menuitem"
-                            >
-                                {link.label}
-                            </a>
-                        ))}
-
-                        <div className="flex flex-wrap gap-6 mt-6 pt-6 border-t border-[var(--color-border)] w-full justify-center">
-                            <a href="https://github.com/bv-saketha-rama" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)]" title="GitHub">
-                                <Github size={24} />
-                            </a>
-                            <a href="https://leetcode.com/u/bv-saketha-rama/" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)]" title="LeetCode">
-                                <LeetCodeIcon size={24} />
-                            </a>
-                            <a href="https://www.linkedin.com/in/saketha-rama-5b93a81b9/" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)]" title="LinkedIn">
-                                <Linkedin size={24} />
-                            </a>
-                            <a href="https://x.com/SakethaRama1809" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)]" title="X (Twitter)">
-                                <Twitter size={24} />
-                            </a>
-                            <a href="https://hashnode.com/@saketha-rama" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)]" title="Hashnode">
-                                <HashnodeIcon size={24} />
-                            </a>
-                            <a href="mailto:sakethram9999@gmail.com" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)]" title="Gmail">
-                                <Mail size={24} />
-                            </a>
-                            <a href="https://drive.google.com/file/d/1m6jIYbU_qrYiGd7D4E_2xWTlKXHCJHEN/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="text-[var(--color-text-secondary)] hover:text-[var(--color-text)]" title="Resume">
-                                <FileText size={24} />
-                            </a>
-                        </div>
+                <div id="mobile-nav" className="xl:hidden fixed inset-x-0 bottom-0 top-[var(--header-h)] z-50 bg-bg overflow-y-auto">
+                    <div className="max-w-page mx-auto px-[var(--gutter)] py-8">
+                        <ul className="border-t border-line">
+                            {navLinks.map((link, i) => (
+                                <li key={link.href} className="border-b border-line">
+                                    <a
+                                        href={link.href}
+                                        onClick={closeMobileNav}
+                                        aria-current={active === link.href ? 'true' : undefined}
+                                        className="flex items-baseline gap-4 py-4 font-display text-xl font-semibold text-ink"
+                                    >
+                                        <span className="meta w-6">0{i + 1}</span>
+                                        {link.label}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                        <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-4">
+                            {socialLinks.map((link) => (
+                                <li key={link.id}>
+                                    <a
+                                        href={link.url}
+                                        {...(isExternal(link.url) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                                        className="inline-flex items-center gap-2 text-sm text-muted hover:text-ink"
+                                    >
+                                        <SocialIcon id={link.id} size={16} />
+                                        {link.name}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 </div>
             )}

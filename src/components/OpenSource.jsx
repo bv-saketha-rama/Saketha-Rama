@@ -1,5 +1,5 @@
-import { Github } from 'lucide-react';
-import HashnodeIcon from './icons/HashnodeIcon';
+import { ArrowUpRight } from 'lucide-react';
+import SectionShell from './SectionShell';
 
 const contributions = [
     {
@@ -37,63 +37,41 @@ const contributions = [
     }
 ];
 
-const OpenSource = () => {
-    return (
-        <section id="opensource" className="py-12 border-b border-[var(--color-border)]">
-            <h2 className="text-2xl font-bold text-[var(--color-text)] mb-8">Open Source Contributions</h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {contributions.map((item, index) => (
-                    <div key={index} className="group relative p-8 bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-[2.5rem] hover:border-[var(--color-accent)] transition-all duration-500 hover:shadow-2xl overflow-hidden flex flex-col">
-                        <div className="flex justify-between items-start mb-6">
-                            <div>
-                                <span className="inline-block px-3 py-1 text-[10px] font-mono tracking-widest uppercase bg-[var(--color-bg)] border border-[var(--color-border)] rounded-full text-[var(--color-accent)] mb-3">
-                                    Pull Request
-                                </span>
-                                <h3 className="text-xl font-bold text-[var(--color-text)] group-hover:text-[var(--color-accent)] transition-colors">
-                                    {item.project}
-                                </h3>
-                                <p className="text-sm font-semibold text-[var(--color-text-secondary)] mt-1">
-                                    {item.title}
-                                </p>
-                            </div>
-                            <div className="flex gap-3">
-                                <a
-                                    href={item.link || "#"}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={`text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors ${!item.link && 'opacity-50 cursor-not-allowed'}`}
-                                    title="View PR on GitHub"
-                                    aria-label={`View PR for ${item.title} on GitHub`}
-                                >
-                                    <Github size={20} />
-                                </a>
-                                <a
-                                    href={item.blog || "#"}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={`text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors ${!item.blog && 'opacity-50 cursor-not-allowed'}`}
-                                    title="Read blog"
-                                    aria-label={`Read blog about ${item.title}`}
-                                >
-                                    <HashnodeIcon size={20} />
-                                </a>
-                            </div>
+const OpenSource = () => (
+    <SectionShell id="opensource" index="03" title="Open Source Contributions">
+        <ul className="border-t border-line">
+            {contributions.map((item) => (
+                <li key={item.link} className="reveal border-b border-line py-8">
+                    <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+                        <div className="min-w-0">
+                            <p className="meta">pull request</p>
+                            <h3 className="mt-1.5 text-lg md:text-xl font-mono font-medium tracking-tight">{item.project}</h3>
+                            <p className="mt-1 text-[0.95rem] text-muted">{item.title}</p>
                         </div>
-
-                        <ul className="space-y-3 mt-auto">
-                            {item.bullets.map((bullet, i) => (
-                                <li key={i} className="text-sm text-[var(--color-text-secondary)] leading-relaxed flex gap-3">
-                                    <span className="text-[var(--color-accent)] font-bold">•</span>
-                                    <span>{bullet}</span>
-                                </li>
-                            ))}
-                        </ul>
+                        <div className="flex items-center gap-5">
+                            {item.link && (
+                                <a href={item.link} target="_blank" rel="noopener noreferrer" className="link-quiet" aria-label={`View PR for ${item.title} on GitHub`}>
+                                    View PR <ArrowUpRight size={14} aria-hidden="true" />
+                                </a>
+                            )}
+                            {item.blog && (
+                                <a href={item.blog} target="_blank" rel="noopener noreferrer" className="link-quiet" aria-label={`Read blog about ${item.title}`}>
+                                    Blog <ArrowUpRight size={14} aria-hidden="true" />
+                                </a>
+                            )}
+                        </div>
                     </div>
-                ))}
-            </div>
-        </section>
-    );
-};
+                    <ul className="mt-5 space-y-2.5">
+                        {item.bullets.map((bullet) => (
+                            <li key={bullet} className="bullet text-[0.94rem] leading-relaxed text-muted">
+                                {bullet}
+                            </li>
+                        ))}
+                    </ul>
+                </li>
+            ))}
+        </ul>
+    </SectionShell>
+);
 
 export default OpenSource;

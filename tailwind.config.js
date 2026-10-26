@@ -7,12 +7,22 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'sans-serif'],
-                mono: ['SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                display: ['Manrope', 'system-ui', 'sans-serif'],
+                sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+                mono: ['"JetBrains Mono"', 'ui-monospace', 'Menlo', 'Consolas', 'monospace'],
+                serif: ['"Instrument Serif"', 'Georgia', 'serif'],
             },
             colors: {
-                'primary': '#0066cc',
-                'primary-hover': '#0052a3',
+                bg: 'var(--bg)',
+                surface: 'var(--surface)',
+                ink: 'var(--text)',
+                muted: 'var(--text-2)',
+                line: 'var(--border)',
+                accent: 'var(--accent)',
+                yc: 'var(--yc)',
+            },
+            maxWidth: {
+                page: '1160px',
             },
         },
     },

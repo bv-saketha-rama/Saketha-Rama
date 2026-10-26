@@ -1,62 +1,35 @@
+import { ArrowUpRight } from 'lucide-react';
 import { useData } from '../context/DataContext';
-import HashnodeIcon from './icons/HashnodeIcon';
+import SectionShell from './SectionShell';
 
 const Writing = () => {
     const { blogs: posts } = useData();
 
     return (
-        <section id="writing" className="py-12 border-b border-[var(--color-border)]">
-            <div className="mb-8 text-left">
-                <h2 className="text-2xl font-bold text-[var(--color-text)]">Writing</h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <SectionShell id="writing" index="05" title="Writing">
+            <ul className="border-t border-line">
                 {posts.map((post) => (
-                    <article
-                        key={post.id}
-                        className="group relative p-6 bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-[2.5rem] hover:border-[var(--color-accent)] transition-all duration-500 flex flex-col h-full overflow-hidden"
-                    >
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="text-[10px] font-mono tracking-widest uppercase text-[var(--color-text-secondary)] bg-[var(--color-bg)] px-3 py-1 rounded-full border border-[var(--color-border)]">
-                                {post.date}
+                    <li key={post.id} className="reveal border-b border-line">
+                        <article className="group grid grid-cols-1 sm:grid-cols-[7.5rem_1fr] gap-x-6 gap-y-2 py-7">
+                            <p className="meta pt-1">{post.date}</p>
+                            <div className="min-w-0">
+                                <h3 className="text-lg leading-snug">
+                                    {post.link ? (
+                                        <a href={post.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-start gap-1.5 hover:text-accent">
+                                            {post.title}
+                                            <ArrowUpRight size={16} className="mt-1 shrink-0 text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
+                                        </a>
+                                    ) : (
+                                        post.title
+                                    )}
+                                </h3>
+                                <p className="mt-2 text-[0.94rem] leading-relaxed">{post.description}</p>
                             </div>
-                            <a
-                                href={post.link || "#"}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={`text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors ${!post.link && 'opacity-50 cursor-not-allowed'}`}
-                                aria-label={`Read ${post.title} on Hashnode`}
-                            >
-                                <HashnodeIcon size={20} />
-                            </a>
-                        </div>
-
-                        <h3 className="text-lg font-bold text-[var(--color-text)] mb-3 group-hover:text-[var(--color-accent)] transition-colors leading-tight">
-                            {post.link ? (
-                                <a href={post.link} target="_blank" rel="noopener noreferrer">
-                                    {post.title}
-                                </a>
-                            ) : (
-                                post.title
-                            )}
-                        </h3>
-
-                        <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed flex-grow">
-                            {post.description}
-                        </p>
-
-                        {post.link && (
-                            <div className="mt-4 pt-4 border-t border-[var(--color-border)] border-opacity-30 self-start text-[var(--color-accent)] opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-[-10px] group-hover:translate-x-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M5 12h14" />
-                                    <path d="m12 5 7 7-7 7" />
-                                </svg>
-                            </div>
-                        )}
-                    </article>
+                        </article>
+                    </li>
                 ))}
-            </div>
-        </section>
+            </ul>
+        </SectionShell>
     );
 };
 

@@ -1,80 +1,66 @@
-import { Github } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { useData } from '../context/DataContext';
-import HashnodeIcon from './icons/HashnodeIcon';
+import SectionShell from './SectionShell';
 
 const Projects = () => {
     const { projects } = useData();
 
     return (
-        <section id="projects" className="py-12 border-b border-[var(--color-border)]">
-            <h2 className="text-2xl font-bold text-[var(--color-text)] mb-8">Projects</h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <SectionShell id="projects" index="04" title="Projects">
+            <div className="grid grid-cols-1 gap-5">
                 {(Array.isArray(projects) ? projects : []).map((project) => (
-                    <div
-                        key={project.id}
-                        className="group relative p-8 bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-[2.5rem] hover:border-[var(--color-accent)] transition-all duration-500 flex flex-col h-full overflow-hidden"
-                    >
-                        {/* Coming Soon Badge */}
-                        {project.comingSoon && (
-                            <div className="absolute top-4 right-4 px-3 py-1 text-[10px] font-mono tracking-wider uppercase bg-[var(--color-accent)] text-white rounded-full">
-                                Coming Soon
-                            </div>
+                    <article key={project.id} className="reveal card overflow-hidden">
+                        {project.image && (
+                            <img src={project.image} alt="" loading="lazy" className="block w-full aspect-[16/9] object-cover border-b border-line" />
                         )}
-
-                        <div className="flex items-start justify-between mb-4 pr-24">
-                            <h3 className="text-xl font-bold text-[var(--color-text)] group-hover:text-[var(--color-accent)] transition-colors">
-                                {project.title}
-                            </h3>
-                            <div className="flex gap-3">
-                                <a
-                                    href={project.links?.github || "#"}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={`text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors ${!project.links?.github && 'opacity-50 cursor-not-allowed'}`}
-                                    aria-label={`View ${project.title} on GitHub`}
-                                >
-                                    <Github size={20} />
-                                </a>
-                                <a
-                                    href={project.links?.blog || "#"}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={`text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors ${!project.links?.blog && 'opacity-50 cursor-not-allowed'}`}
-                                    aria-label={`Read blog about ${project.title}`}
-                                >
-                                    <HashnodeIcon size={20} />
-                                </a>
+                        <div className="p-6 md:p-8">
+                            <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
+                                <h3 className="text-xl md:text-2xl leading-snug">{project.title}</h3>
+                                {project.comingSoon && <span className="tag tag-yc">Coming soon</span>}
                             </div>
-                        </div>
 
-                        {/* Description - supports both plain text and bullet points */}
-                        {project.descriptionPoints ? (
-                            <ul className="text-[var(--color-text-secondary)] mb-6 leading-relaxed flex-grow space-y-2 list-disc list-inside">
-                                {project.descriptionPoints.map((point, i) => (
-                                    <li key={i}>{point}</li>
+                            {project.descriptionPoints ? (
+                                <ul className="mt-5 space-y-2.5">
+                                    {project.descriptionPoints.map((point) => (
+                                        <li key={point} className="bullet text-[0.95rem] leading-relaxed text-muted">
+                                            {point}
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p className="mt-5 text-[0.95rem] leading-relaxed">{project.description}</p>
+                            )}
+
+                            <div className="mt-6 flex flex-wrap gap-1.5">
+                                {(Array.isArray(project.tech) ? project.tech : []).map((tech) => (
+                                    <span key={tech} className="tag">{tech}</span>
                                 ))}
-                            </ul>
-                        ) : (
-                            <p className="text-[var(--color-text-secondary)] mb-6 leading-relaxed flex-grow">
-                                {project.description}
-                            </p>
-                        )}
+                            </div>
 
-                        <div className="flex flex-wrap gap-2 pt-4 border-t border-[var(--color-border)] border-opacity-50">
-                            {(Array.isArray(project.tech) ? project.tech : []).map((tech, i) => (
-                                <span
-                                    key={i}
-                                    className="px-3 py-1 text-[10px] font-mono tracking-wider uppercase bg-[var(--color-bg)] border border-[var(--color-border)] rounded-full text-[var(--color-text-secondary)]"
-                                >
-                                    {tech}
-                                </span>
-                            ))}
+                            {(project.links?.website || project.links?.github || project.links?.blog) && (
+                                <div className="mt-6 pt-5 border-t border-line flex flex-wrap gap-6">
+                                    {project.links?.website && (
+                                        <a href={project.links.website} target="_blank" rel="noopener noreferrer" className="link-quiet">
+                                            Visit site <ArrowUpRight size={14} aria-hidden="true" />
+                                        </a>
+                                    )}
+                                    {project.links?.github && (
+                                        <a href={project.links.github} target="_blank" rel="noopener noreferrer" className="link-quiet" aria-label={`View ${project.title} on GitHub`}>
+                                            GitHub <ArrowUpRight size={14} aria-hidden="true" />
+                                        </a>
+                                    )}
+                                    {project.links?.blog && (
+                                        <a href={project.links.blog} target="_blank" rel="noopener noreferrer" className="link-quiet" aria-label={`Read blog about ${project.title}`}>
+                                            Blog <ArrowUpRight size={14} aria-hidden="true" />
+                                        </a>
+                                    )}
+                                </div>
+                            )}
                         </div>
-                    </div>
+                    </article>
                 ))}
             </div>
-        </section>
+        </SectionShell>
     );
 };
 

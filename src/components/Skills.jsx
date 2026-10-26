@@ -1,15 +1,17 @@
+import SectionShell from './SectionShell';
+
 const skillCategories = [
     {
         title: "Languages / Core",
-        skills: ["Python", "Go", "C++", "C", "SQL", "Rust", "Bash"]
+        skills: ["Python", "Go", "C++", "C", "TypeScript", "SQL", "Rust", "Bash"]
     },
     {
         title: "AI / ML Engineering",
-        skills: ["Machine Learning", "Deep Learning", "RAG", "PyTorch", "TensorFlow", "LangChain", "LangGraph", "LLM Orchestration", "Vector Databases", "Transformers"]
+        skills: ["Machine Learning", "Deep Learning", "RAG", "PyTorch", "TensorFlow", "LangChain", "LangGraph", "LLM Orchestration", "Vector Databases", "Transformers", "vLLM"]
     },
     {
         title: "Backend & Systems",
-        skills: ["FastAPI", "Messaging Queues", "Kernel Programming", "System Design", "gRPC", "REST", "GraphQL", "API Design", "Distributed Systems"]
+        skills: ["FastAPI", "Messaging Queues", "Kernel Programming", "System Design", "gRPC", "REST", "GraphQL", "API Design", "Distributed Systems", "RabbitMQ", "Kafka"]
     },
     {
         title: "Data Engineering & DBs",
@@ -17,37 +19,33 @@ const skillCategories = [
     },
     {
         title: "Infra & DevOps",
-        skills: ["Linux", "AWS", "GCP", "Azure", "Docker", "Kubernetes", "Jenkins", "LGTM Stack", "CI/CD", "Performance Optimization"]
-    }
+        skills: ["Linux", "AWS", "GCP", "Azure", "Docker", "Kubernetes", "Jenkins", "LGTM Stack", "CI/CD", "Performance Optimization", "EFS", "OpenTelemetry"]
+    },
+    {
+        title: "Security & Identity",
+        skills: ["OAuth2", "OpenID Connect", "JWT", "RBAC", "IAM", "Token Management", "Multi-tenancy"]
+    },
+    {
+        title: "AI Coding Tools",
+        skills: ["Claude Code", "Codex", "Cursor"]
+    },
 ];
 
-const Skills = () => {
-    return (
-        <section id="skills" className="py-12 border-b border-[var(--color-border)]">
-            <h2 className="text-2xl font-bold text-[var(--color-text)] mb-8">Skills</h2>
-
-            <div className="grid md:grid-cols-2 gap-8">
-                {skillCategories.map((category, index) => (
-                    <div key={index} className="group">
-                        <h3 className="font-bold text-[var(--color-text)] mb-4 flex items-center gap-2">
-                            <span className="w-1 h-4 bg-[var(--color-accent)] rounded-full"></span>
-                            {category.title}
-                        </h3>
-                        <div className="flex flex-wrap gap-2">
-                            {category.skills.map((skill, i) => (
-                                <span
-                                    key={i}
-                                    className="px-4 py-2 text-sm bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-2xl text-[var(--color-text-secondary)] hover:border-[var(--color-accent)] hover:text-[var(--color-text)] transition-all duration-300 cursor-default"
-                                >
-                                    {skill}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </section>
-    );
-};
+const Skills = () => (
+    <SectionShell id="skills" index="07" title="Skills">
+        <dl className="border-t border-line">
+            {skillCategories.map((category) => (
+                <div key={category.title} className="reveal grid grid-cols-1 md:grid-cols-[14rem_1fr] gap-x-8 gap-y-3 border-b border-line py-6">
+                    <dt className="font-display font-semibold text-ink">{category.title}</dt>
+                    <dd className="m-0 flex flex-wrap gap-1.5">
+                        {category.skills.map((skill) => (
+                            <span key={skill} className="tag">{skill}</span>
+                        ))}
+                    </dd>
+                </div>
+            ))}
+        </dl>
+    </SectionShell>
+);
 
 export default Skills;

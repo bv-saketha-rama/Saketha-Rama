@@ -1,24 +1,24 @@
-import { GraduationCap, Briefcase, Mic2 } from 'lucide-react';
+import SectionShell from './SectionShell';
 
 const experiences = [
     {
         timerange: "Apr 2025 - Present",
-        company: "DeepEdge.ai",
-        role: "Software Engineer",
+        company: "DeepEdge AI",
+        role: "Backend & AI/ML Engineer",
         roles: [
             {
                 title: "Backend & AI/ML Engineer",
                 bullets: [
-                    "Migrated a legacy monolith to a FastAPI microservices architecture, significantly improving deployment frequency and system uptime.",
-                    "Refactored request handlers to be fully asynchronous, increasing concurrent throughput without requiring additional infrastructure.",
-                    "Standardized APIs using ReDoc and reusable JSON schemas, which streamlined partner onboarding and reduced technical support overhead.",
-                    "Established a robust pytest framework with mocking patterns, resulting in higher code coverage and fewer production incidents.",
-                    "Leveraged CPU multiprocessing to accelerate model inference, reducing latency and operational costs per request.",
-                    "Developed a VLM-powered batch auto-annotation system, replacing manual workflows to drastically reduce labeling time and increase data throughput."
+                    "Owned a FastAPI annotation microservice as part of a monolith-to-microservices migration, refactoring APIs and schemas for multi-tenant image and video labeling, task lifecycle management, workflow transitions and dataset version publishing.",
+                    "Built AI-assisted annotation workflows integrating SAM, GroundingDINO, CLIP, Florence-2, YOLO Pose and other vision models through an existing inference abstraction, with model weights stored on EFS and loaded into Docker-based runtimes.",
+                    "Integrated asynchronous inference using RabbitMQ for job dispatch and Redis for job status and results, with request timeouts, reconnect handling, trace propagation and non-blocking polling between the annotation service and model runtimes.",
+                    "Designed RBAC and ownership-based authorization for multi-tenant annotation workflows, enforcing role-specific visibility, creator and assignee permissions and write restrictions across annotation, validation, rejection and completion states.",
+                    "Contributed to shared authentication infrastructure for user and service identities, including JWT signature and expiry validation, identity and role propagation across service-to-service calls and multi-secret validation for token secret rotation.",
+                    "Built frontend and backend flows for AI-assisted labeling, including model selection, inference request state, loading and timeout handling, annotation result processing and analytics APIs for task, project and annotator activity."
                 ]
             }
         ],
-        tech: ["Linux", "Git", "Python", "FastAPI", "CI/CD", "Docker", "RabbitMQ"],
+        tech: ["Python", "FastAPI", "RabbitMQ", "Redis", "Docker", "EFS", "AI/ML"],
         type: "work"
     },
     {
@@ -69,84 +69,47 @@ const experiences = [
     }
 ];
 
-const Experience = () => {
-    return (
-        <section id="experience" className="py-12 border-b border-[var(--color-border)]">
-            <h2 className="text-2xl font-bold text-[var(--color-text)] mb-8">Experience & Education</h2>
+const Experience = () => (
+    <SectionShell id="experience" index="02" title="Experience & Education">
+        <ol className="relative border-l border-line ml-1">
+            {experiences.map((exp) => (
+                <li key={exp.company} className="reveal relative pl-8 pb-14 last:pb-0">
+                    <span className="absolute -left-[5px] top-[0.55rem] h-[9px] w-[9px] rounded-full border border-ink bg-bg" aria-hidden="true" />
+                    <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 sm:gap-6">
+                        <h3 className="text-lg md:text-xl leading-snug">{exp.company}</h3>
+                        <p className="meta shrink-0">{exp.timerange}</p>
+                    </div>
+                    <p className="meta mt-1 uppercase">{exp.type === 'education' ? 'education' : 'work'}</p>
 
-            <div className="relative pl-8 max-w-2xl">
-                {/* Vertical line */}
-                <div className="absolute left-0 top-2 bottom-2 w-px bg-[var(--color-border)]" />
-
-                <div className="space-y-12">
-                    {experiences.map((exp, index) => (
-                        <div key={index} className="relative">
-                            {/* Dot/Icon on line */}
-                            <div className="absolute -left-[40px] top-1 w-6 h-6 rounded-full border-2 border-[var(--color-accent)] bg-[var(--color-bg)] flex items-center justify-center z-10 text-[var(--color-accent)]">
-                                {exp.type === 'education' ? (
-                                    <GraduationCap size={12} />
-                                ) : exp.type === 'talk' ? (
-                                    <Mic2 size={12} />
-                                ) : (
-                                    <Briefcase size={12} />
+                    <div className="mt-6 space-y-8">
+                        {exp.roles.map((role) => (
+                            <div key={role.title}>
+                                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                                    <p className="font-medium text-ink">{role.title}</p>
+                                    {role.period && <span className="meta">{role.period}</span>}
+                                </div>
+                                {role.bullets.length > 0 && (
+                                    <ul className="mt-3 space-y-2.5">
+                                        {role.bullets.map((bullet) => (
+                                            <li key={bullet} className="bullet text-[0.94rem] leading-relaxed text-muted">
+                                                {bullet}
+                                            </li>
+                                        ))}
+                                    </ul>
                                 )}
                             </div>
+                        ))}
+                    </div>
 
-                            <div className="space-y-4">
-                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-1">
-                                    <div className="font-bold text-lg text-[var(--color-text)]">
-                                        {exp.company}
-                                    </div>
-                                    <div className="text-sm font-mono text-[var(--color-text-secondary)]">
-                                        {exp.timerange}
-                                    </div>
-                                </div>
-
-                                <div className="p-6 bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-2xl text-[var(--color-text-secondary)] shadow-sm">
-                                    <div className="space-y-8">
-                                        {exp.roles.map((role, ri) => (
-                                            <div key={ri} className={ri > 0 ? "pt-6 border-t border-[var(--color-border)] border-opacity-30" : ""}>
-                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
-                                                    <div className="font-bold text-[var(--color-text)] flex items-center gap-2">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]"></span>
-                                                        {role.title}
-                                                    </div>
-                                                    {role.period && (
-                                                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[var(--color-bg)] border border-[var(--color-border)]">
-                                                            {role.period}
-                                                        </span>
-                                                    )}
-                                                </div>
-
-                                                {role.bullets.length > 0 && (
-                                                    <ul className="space-y-3">
-                                                        {role.bullets.map((bullet, i) => (
-                                                            <li key={i} className="text-sm leading-relaxed flex items-start gap-3">
-                                                                <span className="mt-[0.6em] w-1 h-1 rounded-full bg-[var(--color-accent)] opacity-60 flex-shrink-0"></span>
-                                                                <span className="flex-1">{bullet}</span>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="flex flex-wrap gap-2 mt-6 pt-4 border-t border-[var(--color-border)] border-opacity-30">
-                                        {exp.tech.map((t, i) => (
-                                            <span key={i} className="px-2 py-0.5 text-[10px] font-mono bg-[var(--color-bg)] border border-[var(--color-border)] rounded text-[var(--color-text-secondary)]">
-                                                {t}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
-};
+                    <div className="mt-6 flex flex-wrap gap-1.5">
+                        {exp.tech.map((t) => (
+                            <span key={t} className="tag">{t}</span>
+                        ))}
+                    </div>
+                </li>
+            ))}
+        </ol>
+    </SectionShell>
+);
 
 export default Experience;

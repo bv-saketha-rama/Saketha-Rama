@@ -1,3 +1,6 @@
+import { ArrowUpRight } from 'lucide-react';
+import SectionShell from './SectionShell';
+
 const publications = [
     {
         title: "Experimental Analysis of Machine Learning Classification Models on Medical Datasets",
@@ -34,50 +37,31 @@ const publications = [
     }
 ];
 
-const Research = () => {
-    return (
-        <section id="research" className="py-12 border-b border-[var(--color-border)]">
-            <h2 className="text-2xl font-bold text-[var(--color-text)] mb-8">Research Publications</h2>
-
-            <div className="space-y-6">
-                {publications.map((pub, index) => (
-                    <div key={index} className="group p-6 md:p-8 bg-[var(--color-bg-secondary)] border border-[var(--color-border)] rounded-[2.5rem] hover:border-[var(--color-accent)] transition-all duration-500 shadow-sm hover:shadow-xl">
-                        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
-                            <div className="flex-1">
-                                <span className="inline-block px-3 py-1 text-[10px] font-mono tracking-widest uppercase bg-[var(--color-bg)] border border-[var(--color-border)] rounded-full text-[var(--color-accent)] mb-3">
-                                    {pub.publisher}
-                                </span>
-                                <h3 className="text-xl font-bold text-[var(--color-text)] leading-tight mb-2 group-hover:text-[var(--color-accent)] transition-colors">
-                                    {pub.title}
-                                </h3>
-                                <p className="text-sm font-medium text-[var(--color-text-secondary)] italic">
-                                    {pub.conference}
-                                </p>
-                            </div>
-                            <a
-                                href={pub.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-bg)] border border-[var(--color-border)] text-xs font-medium text-[var(--color-text)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-all"
-                            >
-                                Read Paper
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg>
-                            </a>
-                        </div>
-
-                        <ul className="space-y-3">
-                            {pub.bullets.map((bullet, i) => (
-                                <li key={i} className="text-sm text-[var(--color-text-secondary)] leading-relaxed flex gap-3">
-                                    <span className="text-[var(--color-accent)] font-bold">•</span>
-                                    <span>{bullet}</span>
+const Research = () => (
+    <SectionShell id="research" index="06" title="Research Publications">
+        <ol className="space-y-12">
+            {publications.map((pub, index) => (
+                <li key={pub.link} className="reveal grid grid-cols-[2.25rem_1fr] gap-x-3">
+                    <span className="meta pt-1.5">[{index + 1}]</span>
+                    <article className="min-w-0">
+                        <h3 className="text-lg md:text-xl leading-snug">{pub.title}</h3>
+                        <p className="mt-2 font-serif italic text-[1.05rem] leading-snug text-muted">{pub.conference}</p>
+                        <p className="meta mt-2 uppercase">{pub.publisher}</p>
+                        <ul className="mt-5 space-y-2.5">
+                            {pub.bullets.map((bullet) => (
+                                <li key={bullet} className="bullet text-[0.94rem] leading-relaxed text-muted">
+                                    {bullet}
                                 </li>
                             ))}
                         </ul>
-                    </div>
-                ))}
-            </div>
-        </section>
-    );
-};
+                        <a href={pub.link} target="_blank" rel="noopener noreferrer" className="link-quiet mt-5">
+                            Read paper <ArrowUpRight size={14} aria-hidden="true" />
+                        </a>
+                    </article>
+                </li>
+            ))}
+        </ol>
+    </SectionShell>
+);
 
 export default Research;
