@@ -10,21 +10,19 @@ const testimonials = [
     { brand: 'copilot', name: 'GitHub Copilot', handle: '@githubcopilot', quote: 'I suggested one line. He rewrote the whole function. We have trust issues.' },
 ];
 
-const Card = ({ brand, name, handle, quote }) => {
-    return (
-        <figure className="testimonial card w-[300px] sm:w-[360px] shrink-0 p-5 flex flex-col gap-4">
-            <figcaption className="flex items-center gap-3">
-                <BrandLogo brand={brand} />
-                <span className="min-w-0 flex-1 leading-tight">
-                    <span className="block font-display font-semibold text-ink">{name}</span>
-                    <span className="block text-[0.8rem] text-muted truncate">{handle} · AI coworker</span>
-                </span>
-                <MessageCircle size={16} className="text-muted shrink-0" aria-hidden="true" />
-            </figcaption>
-            <blockquote className="text-[0.95rem] leading-relaxed text-ink">&ldquo;{quote}&rdquo;</blockquote>
-        </figure>
-    );
-};
+const Card = ({ brand, name, handle, quote }) => (
+    <figure className="testimonial card w-[300px] sm:w-[360px] shrink-0 p-5 flex flex-col gap-4">
+        <figcaption className="flex items-center gap-3">
+            <BrandLogo brand={brand} />
+            <span className="min-w-0 flex-1 leading-tight">
+                <span className="block font-display font-semibold text-ink">{name}</span>
+                <span className="block text-[0.8rem] text-muted truncate">{handle} · AI coworker</span>
+            </span>
+            <MessageCircle size={16} className="text-muted shrink-0" aria-hidden="true" />
+        </figcaption>
+        <blockquote className="text-[0.95rem] leading-relaxed text-ink">&ldquo;{quote}&rdquo;</blockquote>
+    </figure>
+);
 
 const Testimonials = () => (
     <section id="testimonials" className="section" aria-labelledby="testimonials-title">

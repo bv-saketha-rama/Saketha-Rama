@@ -1,23 +1,20 @@
-import profile from '../assets/profile.jpg';
+import { useRef } from 'react';
+import KoiPond from './koi/KoiPond';
 import { socialLinks, isExternal } from '../data/socialLinks';
 import SocialIcon from './icons/SocialIcon';
 
 const PHRASE = ['building', 'something', 'that', 'people', 'want'];
 
-// The hero: photo on the left, intro on the right.
-const About = () => (
-    <section id="about" className="py-14 md:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] items-center gap-10 md:gap-14">
-            <img
-                src={profile}
-                alt="Saketha Rama speaking at Unfold 2023"
-                width="488"
-                height="488"
-                className="w-40 h-40 md:w-60 md:h-60 rounded-full object-cover border border-line"
-            />
-            <div className="max-w-[40rem]">
-                <p className="font-display text-xl md:text-2xl font-semibold tracking-[-0.02em] text-ink mb-4">Hi, I&apos;m Saketha</p>
-                <h1 className="font-display text-[clamp(1.6rem,2.8vw,2.35rem)] font-semibold leading-[1.22] tracking-[-0.025em] text-ink">
+// The hero: intro in the left column (~40%), a koi pond filling the rest.
+const About = () => {
+    const textRef = useRef(null);
+
+    return (
+        <section id="about" className="hero relative flex flex-col pt-12 md:flex-row md:items-center md:py-0">
+            <div ref={textRef} className="relative z-10 max-w-[36rem] md:max-w-none md:w-[48%] lg:w-[40%] md:py-16">
+                <p className="font-display text-xl md:text-2xl font-semibold tracking-[-0.02em] text-ink">Hi, I&apos;m Saketha</p>
+                <span className="block w-7 h-[2px] bg-yc mt-3 mb-6" aria-hidden="true" />
+                <h1 className="font-display text-[clamp(1.6rem,2.4vw,2.1rem)] font-semibold leading-[1.22] tracking-[-0.025em] text-ink">
                     I&apos;m a passionate software engineer with 1.5+ years of experience driven by the motivation of{' '}
                     <a href="https://www.ycombinator.com" target="_blank" rel="noopener noreferrer" className="yc-phrase">
                         {PHRASE.map((word, i) => (
@@ -47,8 +44,9 @@ const About = () => (
                     ))}
                 </ul>
             </div>
-        </div>
-    </section>
-);
+            <KoiPond avoidRef={textRef} className="pond" />
+        </section>
+    );
+};
 
 export default About;
