@@ -29,9 +29,9 @@ const PiIcon = ({ size = 20 }) => (
 const brands = {
     claude: { tile: 'bg-[#D97757] text-white', d: CLAUDE },
     codex: { tile: 'bg-white text-black border border-line', d: CODEX },
-    cursor: { tile: 'bg-[#14120B] text-[#EDECEC]', d: CURSOR },
-    pi: { tile: 'bg-white text-ink border border-line' },
-    copilot: { tile: 'bg-black text-white', d: COPILOT },
+    cursor: { tile: 'bg-[#14120B] text-[#EDECEC] border border-line', d: CURSOR },
+    pi: { tile: 'bg-surface text-ink border border-line' },
+    copilot: { tile: 'bg-black text-white border border-line', d: COPILOT },
 };
 
 const BrandLogo = ({ brand, size = 22 }) => {

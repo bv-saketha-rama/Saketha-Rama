@@ -10,6 +10,12 @@
   --border: #ECECF3;
   --accent: #6366F1;
   --yc: #E86B23;
+  --yc-hover: #D45A14;
+  --border-strong: #DCDDE8;
+  --rule: #B4B8C2;
+  --scroll-thumb: #DCDCE6;
+  --selection: rgba(99, 102, 241, 0.16);
+  --lift: rgba(23, 25, 30, 0.18);
 
   --gutter: clamp(1.25rem, 4vw, 2.5rem);
   --section-y: clamp(4.5rem, 10vw, 8rem);
@@ -17,11 +23,29 @@
   color-scheme: light;
 }
 
+:root[data-theme="dark"] {
+  --bg: #0F1013;
+  --surface: #16181D;
+  --text: #ECEDF0;
+  --text-2: #9CA1AB;
+  --border: #25272E;
+  --accent: #8B8EF7;
+  --yc: #F07A35;
+  --yc-hover: #FF9050;
+  --border-strong: #353843;
+  --rule: #4B4F5A;
+  --scroll-thumb: #2E3139;
+  --selection: rgba(139, 142, 247, 0.28);
+  --lift: rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}
+
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 16px); }
 
 body {
   margin: 0;
+  transition: background-color 250ms ease, color 250ms ease;
   background-color: var(--bg);
   color: var(--text);
   font-family: 'Inter', system-ui, sans-serif;
@@ -43,11 +67,11 @@ h1, h2, h3, h4 {
 p { margin: 0; color: var(--text-2); }
 a { color: inherit; text-decoration: none; transition: color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease; }
 a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
-::selection { background: rgba(99, 102, 241, 0.16); color: var(--text); }
+::selection { background: var(--selection); color: var(--text); }
 
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: #DCDCE6; border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 4px; }
 
 /* Shared editorial primitives */
 .meta {
@@ -89,7 +113,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   top: 0.72em;
   width: 0.4rem;
   height: 1px;
-  background: #B4B8C2;
+  background: var(--rule);
 }
 
 .card {
@@ -98,7 +122,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   border-radius: 14px;
   transition: transform 300ms ease, border-color 300ms ease, box-shadow 300ms ease;
 }
-.card:hover { transform: translateY(-2px); border-color: #DCDDE8; box-shadow: 0 6px 20px -14px rgba(23, 25, 30, 0.18); }
+.card:hover { transform: translateY(-2px); border-color: var(--border-strong); box-shadow: 0 6px 20px -14px var(--lift); }
 
 .section { padding-block: var(--section-y); border-top: 1px solid var(--border); }
 
@@ -150,7 +174,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 }
 .yc-phrase .w { display: inline-block; transform: skewX(0deg); transition: transform 250ms ease; }
 .yc-phrase .q { color: var(--text); font-family: 'Manrope', system-ui, sans-serif; font-style: normal; font-size: 0.893em; -webkit-text-stroke: 0; }
-.yc-phrase:hover, .yc-phrase:focus-visible { color: #D45A14; }
+.yc-phrase:hover, .yc-phrase:focus-visible { color: var(--yc-hover); }
 .yc-phrase:hover .w, .yc-phrase:focus-visible .w { transform: skewX(-8deg); }
 @keyframes yc-underline { from { background-size: 0% 1.5px; } to { background-size: 100% 1.5px; } }
 

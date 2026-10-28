@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, Moon, Sun, X } from 'lucide-react';
 import SocialIcon from './icons/SocialIcon';
 import { socialLinks, isExternal } from '../data/socialLinks';
 
@@ -11,6 +11,35 @@ const navLinks = [
     { href: '#writing', label: 'Writing' },
     { href: '#research', label: 'Research' },
 ];
+
+// The initial theme is set on <html> by the inline script in index.html.
+const ThemeToggle = () => {
+    const [dark, setDark] = useState(() => document.documentElement.dataset.theme === 'dark');
+
+    const toggle = () => {
+        const next = dark ? 'light' : 'dark';
+        document.documentElement.dataset.theme = next;
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#0F1013' : '#FAFAF8');
+        try {
+            localStorage.setItem('theme', next);
+        } catch {
+            // Storage blocked: the choice just won't be remembered.
+        }
+        setDark(!dark);
+    };
+
+    return (
+        <button
+            type="button"
+            onClick={toggle}
+            className="p-2 rounded-full text-muted hover:text-ink transition-colors"
+            aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={dark ? 'Light mode' : 'Dark mode'}
+        >
+            {dark ? <Sun size={18} /> : <Moon size={18} />}
+        </button>
+    );
+};
 
 const Header = () => {
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
@@ -47,30 +76,34 @@ const Header = () => {
                     Saketha Rama
                 </a>
 
-                <ul className="hidden xl:flex items-center gap-7">
-                    {navLinks.map((link) => (
-                        <li key={link.href}>
-                            <a
-                                href={link.href}
-                                aria-current={active === link.href ? 'true' : undefined}
-                                className={`nav-link text-sm whitespace-nowrap ${active === link.href ? 'text-ink' : 'text-muted hover:text-ink'}`}
-                            >
-                                {link.label}
-                            </a>
-                        </li>
-                    ))}
-                </ul>
+                <div className="flex items-center gap-4 xl:gap-6">
+                    <ul className="hidden xl:flex items-center gap-7">
+                        {navLinks.map((link) => (
+                            <li key={link.href}>
+                                <a
+                                    href={link.href}
+                                    aria-current={active === link.href ? 'true' : undefined}
+                                    className={`nav-link text-sm whitespace-nowrap ${active === link.href ? 'text-ink' : 'text-muted hover:text-ink'}`}
+                                >
+                                    {link.label}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
 
-                <button
-                    type="button"
-                    onClick={() => setIsMobileNavOpen((v) => !v)}
-                    className="xl:hidden -mr-2 p-2 rounded-full text-muted hover:text-ink"
-                    aria-label={isMobileNavOpen ? 'Close menu' : 'Open menu'}
-                    aria-expanded={isMobileNavOpen}
-                    aria-controls="mobile-nav"
-                >
-                    {isMobileNavOpen ? <X size={22} /> : <Menu size={22} />}
-                </button>
+                    <ThemeToggle />
+
+                    <button
+                        type="button"
+                        onClick={() => setIsMobileNavOpen((v) => !v)}
+                        className="xl:hidden -mr-2 p-2 rounded-full text-muted hover:text-ink"
+                        aria-label={isMobileNavOpen ? 'Close menu' : 'Open menu'}
+                        aria-expanded={isMobileNavOpen}
+                        aria-controls="mobile-nav"
+                    >
+                        {isMobileNavOpen ? <X size={22} /> : <Menu size={22} />}
+                    </button>
+                </div>
             </nav>
 
             {isMobileNavOpen && (

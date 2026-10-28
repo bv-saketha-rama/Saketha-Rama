@@ -46,11 +46,11 @@ const KINDS = {
 const LARGE = ['orange', 'cobalt', 'coral'];
 const SMALL = ['indigo', 'sage', 'coral', 'cobalt', 'orange', 'indigo', 'sage'];
 const EYE = '#1E2128';
-const SHADOW = 'rgba(23,25,30,0.045)';
-const PAD = 'rgba(122,143,128,0.5)';
-const PAD_EDGE = 'rgba(96,117,102,0.66)';
-const RIPPLE = '#A3A7B0';
-const SPARK = '#BEC1C8';
+// The water's own colors, per site theme (the fish keep theirs).
+const WATER = {
+    light: { shadow: 'rgba(23,25,30,0.045)', pad: 'rgba(122,143,128,0.5)', padEdge: 'rgba(96,117,102,0.66)', ripple: '#A3A7B0', spark: '#BEC1C8' },
+    dark: { shadow: 'rgba(0,0,0,0.32)', pad: 'rgba(127,156,132,0.36)', padEdge: 'rgba(150,178,155,0.5)', ripple: '#5C616C', spark: '#4A4F59' },
+};
 
 // Half-width of the body (in units of W) along the spine, s = 0 at the nose.
 const bodyWidth = (s) => {
@@ -70,6 +70,7 @@ export function createPond({ reduced = false, seed = 7 } = {}) {
     let fish = [];
     let pads = [];
     let padObs = []; // lily pads as circles the fish swim around
+    let water = WATER.light;
     let occ = new Uint8Array(0); // per-frame owner of each grid cell, so nothing ever draws over anything else
     let cols = 0;
     let sparks = [];
@@ -645,7 +646,7 @@ export function createPond({ reduced = false, seed = 7 } = {}) {
                         (occ[idx] = f.id), put(fl % 3 === 0 ? pal.finDeep : pal.fin, cx, cy, cell * 0.55);
                         continue;
                     }
-                    if (!masked(cx + so, cy + so * 1.3)) put(SHADOW, cx + so, cy + so * 1.3, cell * 0.9);
+                    if (!masked(cx + so, cy + so * 1.3)) put(water.shadow, cx + so, cy + so * 1.3, cell * 0.9);
                     const e = d / bw;
                     if (bs > 0.06 && bs < 0.115 && e > 0.42 && e < 0.8) {
                         (occ[idx] = f.id), put(EYE, cx, cy, cell * 0.7);
@@ -703,7 +704,7 @@ export function createPond({ reduced = false, seed = 7 } = {}) {
         for (const s of sparks) {
             const a = reduced ? 0.6 : 0.35 + 0.35 * Math.sin(t * 0.9 + s.ph);
             ctx.globalAlpha = a;
-            ctx.fillStyle = s.warm ? '#E86B23' : SPARK;
+            ctx.fillStyle = s.warm ? '#E86B23' : water.spark;
             if (s.plus) {
                 ctx.fillRect(s.x - 3, s.y - 0.5, 6, 1);
                 ctx.fillRect(s.x - 0.5, s.y - 3, 1, 6);
@@ -722,7 +723,7 @@ export function createPond({ reduced = false, seed = 7 } = {}) {
         }
 
         // Ripples: dotted rings.
-        ctx.fillStyle = RIPPLE;
+        ctx.fillStyle = water.ripple;
         for (const r of ripples) {
             const k = (t - r.t0) / r.dur;
             const rad = r.max * (1 - (1 - k) * (1 - k));
@@ -747,11 +748,11 @@ export function createPond({ reduced = false, seed = 7 } = {}) {
         // Lily pads claim their cells, then big fish, then small ones; a claimed
         // cell is never drawn again. Shadows sit underneath everything.
         occ.fill(0);
-        batches.set(SHADOW, []);
+        batches.set(water.shadow, []);
         for (const cells of pads) {
             for (let i = 0; i < cells.length; i += 3) {
                 occ[cells[i + 1] * cols + cells[i]] = 255;
-                put(cells[i + 2] ? PAD_EDGE : PAD, (cells[i] + 0.5) * cell, (cells[i + 1] + 0.5) * cell, cell * 0.62);
+                put(cells[i + 2] ? water.padEdge : water.pad, (cells[i] + 0.5) * cell, (cells[i + 1] + 0.5) * cell, cell * 0.62);
             }
         }
         for (let i = fish.length - 1; i >= 0; i--) rasterFish(fish[i]);
@@ -765,6 +766,9 @@ export function createPond({ reduced = false, seed = 7 } = {}) {
     };
 
     return {
+        setTheme(dark) {
+            water = dark ? WATER.dark : WATER.light;
+        },
         resize(w, h, textRect, mobile) {
             const fresh = !fish.length || Math.abs(w - W) > 80 || Math.abs(h - H) > 80;
             W = w;

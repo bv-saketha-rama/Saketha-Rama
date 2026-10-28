@@ -49,6 +49,16 @@ const KoiPond = ({ avoidRef, className = '' }) => {
             raf = 0;
         };
 
+        // Follow the site theme (set on <html> by the header toggle).
+        const root = document.documentElement;
+        const applyTheme = () => pond.setTheme(root.dataset.theme === 'dark');
+        applyTheme();
+        const mo = new MutationObserver(() => {
+            applyTheme();
+            pond.draw(ctx, dpr);
+        });
+        mo.observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+
         layout();
         const ro = new ResizeObserver(layout);
         ro.observe(canvas);
@@ -76,6 +86,7 @@ const KoiPond = ({ avoidRef, className = '' }) => {
         return () => {
             stop();
             ro.disconnect();
+            mo.disconnect();
             io.disconnect();
             document.removeEventListener('visibilitychange', onVisibility);
             canvas.removeEventListener('pointermove', onMove);

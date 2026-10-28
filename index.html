@@ -5,6 +5,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#FAFAF8" />
+  <script>
+    // Apply the saved (or system) theme before first paint, so there's no flash.
+    (function () {
+      var t;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = t;
+      if (t === 'dark') document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0F1013');
+    })();
+  </script>
   <title>Saketha Rama - Software Engineer</title>
   <meta name="description"
     content="Software Engineer exploring the intersection of Backend Engineering, AI/ML, and Infrastructure. Passionate about systems programming and solving high-impact technical challenges." />
