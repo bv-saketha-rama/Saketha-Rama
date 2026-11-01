@@ -27,7 +27,6 @@ const Card = ({ brand, name, handle, quote }) => (
 const Testimonials = () => (
     <section id="testimonials" className="section" aria-labelledby="testimonials-title">
         <header className="mb-10">
-            <p className="meta mb-3">unsolicited, entirely fictional reviews</p>
             <h2 id="testimonials-title" className="text-[clamp(1.75rem,3.2vw,2.5rem)]">
                 Here&apos;s what my colleagues say about me
             </h2>

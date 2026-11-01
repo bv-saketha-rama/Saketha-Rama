@@ -3,6 +3,7 @@ import SectionShell from './SectionShell';
 const experiences = [
     {
         timerange: "Apr 2025 - Present",
+        emoji: { char: "🧑‍💻", label: "Software engineer" },
         company: "DeepEdge AI",
         role: "Backend & AI/ML Engineer",
         roles: [
@@ -23,6 +24,7 @@ const experiences = [
     },
     {
         timerange: "Aug 2024 - Mar 2025",
+        emoji: { char: "🧑‍💼", label: "Intern" },
         company: "MassMutual India",
         role: "Data Engineering Intern",
         roles: [
@@ -39,6 +41,7 @@ const experiences = [
     },
     {
         timerange: "2020 - 2024",
+        emoji: { char: "🧑‍🎓", label: "College student" },
         company: "Indian Institute of Information Technology, Design & Manufacturing, Kancheepuram",
         type: "education",
         roles: [
@@ -75,11 +78,17 @@ const Experience = () => (
             {experiences.map((exp) => (
                 <li key={exp.company} className="reveal relative pl-8 pb-14 last:pb-0">
                     <span className="absolute -left-[5px] top-[0.55rem] h-[9px] w-[9px] rounded-full border border-ink bg-bg" aria-hidden="true" />
-                    <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 sm:gap-6">
-                        <h3 className="text-lg md:text-xl leading-snug">{exp.company}</h3>
-                        <p className="meta shrink-0">{exp.timerange}</p>
+                    <div className="flex items-start justify-between gap-4 sm:gap-6">
+                        <div className="min-w-0">
+                            <h3 className="text-lg md:text-xl leading-snug">{exp.company}</h3>
+                            <p className="meta mt-1">
+                                {exp.timerange} · <span className="uppercase">{exp.type === 'education' ? 'education' : 'work'}</span>
+                            </p>
+                        </div>
+                        <span role="img" aria-label={exp.emoji.label} title={exp.emoji.label} className="shrink-0 text-2xl md:text-3xl leading-none select-none">
+                            {exp.emoji.char}
+                        </span>
                     </div>
-                    <p className="meta mt-1 uppercase">{exp.type === 'education' ? 'education' : 'work'}</p>
 
                     <div className="mt-6 space-y-8">
                         {exp.roles.map((role) => (

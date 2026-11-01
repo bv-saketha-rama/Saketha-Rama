@@ -103,6 +103,12 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 }
 .link-quiet:hover { color: var(--accent); border-color: var(--accent); }
 
+/* GitHub's merged-PR purple, as a link to the PR. */
+.pr-merged { display: inline-flex; padding: 10px; margin: -10px; color: #8250DF; transition: color 150ms ease, transform 150ms ease; }
+.pr-merged:hover { color: #6639BA; transform: translateY(-1px); }
+:root[data-theme="dark"] .pr-merged { color: #A371F7; }
+:root[data-theme="dark"] .pr-merged:hover { color: #BC8CFF; }
+
 .tag-yc { color: var(--yc); border-color: rgba(232, 107, 35, 0.3); }
 
 .bullet { position: relative; padding-left: 1.1rem; }
@@ -173,25 +179,24 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   transition: color 250ms ease;
 }
 .yc-phrase .w { display: inline-block; transform: skewX(0deg); transition: transform 250ms ease; }
-.yc-phrase .q { color: var(--text); font-family: 'Manrope', system-ui, sans-serif; font-style: normal; font-size: 0.893em; -webkit-text-stroke: 0; }
 .yc-phrase:hover, .yc-phrase:focus-visible { color: var(--yc-hover); }
 .yc-phrase:hover .w, .yc-phrase:focus-visible .w { transform: skewX(-8deg); }
 @keyframes yc-underline { from { background-size: 0% 1.5px; } to { background-size: 100% 1.5px; } }
 
 /* Hero koi pond: the hero fills the first screen exactly, so the divider below
-   it sits just past the fold. A band under the intro on mobile, behind it on desktop. */
+   it sits just past the fold. The pond spans the whole hero, edge to edge, behind the intro. */
 .hero { min-height: calc(100vh - var(--header-h)); min-height: calc(100svh - var(--header-h)); }
 .pond {
+  position: absolute;
+  top: 0;
+  left: calc(50% - 50vw);
   display: block;
-  flex: 1 1 0;
   width: 100vw;
-  min-height: 300px;
-  margin: 1rem calc(50% - 50vw) 0;
+  height: 100%;
   touch-action: pan-y;
 }
-@media (min-width: 768px) {
-  .pond { position: absolute; top: 0; left: calc(50% - 50vw); height: 100%; min-height: 0; margin: 0; }
-}
+/* Fish swim under the intro: a soft halo in the page colour keeps the text readable. */
+.hero-text { text-shadow: 0 0 6px var(--bg), 0 0 14px var(--bg); }
 
 /* Testimonials: seamless right-to-left marquee. Two identical groups;
    the track moves by exactly one group width, then loops. */

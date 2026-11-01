@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { createPond } from './pond';
 
-// Decorative koi pond. Fish avoid (and are never drawn over) the element in avoidRef.
-const KoiPond = ({ avoidRef, className = '' }) => {
+// Decorative koi pond filling its parent. Pointer and clicks are read from the
+// parent, so the pond still reacts under any content laid over it.
+const KoiPond = ({ className = '' }) => {
     const canvasRef = useRef(null);
 
     useEffect(() => {
@@ -16,20 +17,36 @@ const KoiPond = ({ avoidRef, className = '' }) => {
         let visible = false;
         let last = 0;
 
+        // Text marked data-pond-focus fades the fish that swim under it. Its box is
+        // measured from the text itself (not the full-width blocks holding it), so
+        // only the area around the words is affected.
+        const area = canvas.parentElement;
+        const focusEl = area.querySelector('[data-pond-focus]');
+        const measureFocus = () => {
+            if (!focusEl) return;
+            const c = canvas.getBoundingClientRect();
+            const range = document.createRange();
+            let [l, t, r, b] = [Infinity, Infinity, -Infinity, -Infinity];
+            for (const child of focusEl.children) {
+                range.selectNodeContents(child);
+                const box = range.getBoundingClientRect();
+                if (!box.width || !box.height) continue;
+                l = Math.min(l, box.left);
+                t = Math.min(t, box.top);
+                r = Math.max(r, box.right);
+                b = Math.max(b, box.bottom);
+            }
+            pond.setFocus(r > l ? { x: Math.round(l - c.left), y: Math.round(t - c.top), w: Math.round(r - l), h: Math.round(b - t) } : null);
+        };
+
         const layout = () => {
             const r = canvas.getBoundingClientRect();
             if (!r.width || !r.height) return;
             dpr = Math.min(2, window.devicePixelRatio || 1);
             canvas.width = Math.round(r.width * dpr);
             canvas.height = Math.round(r.height * dpr);
-            let text = null;
-            const el = avoidRef?.current;
-            if (el) {
-                const tr = el.getBoundingClientRect();
-                const box = { x: tr.left - r.left, y: tr.top - r.top, w: tr.width, h: tr.height };
-                if (box.x < r.width && box.x + box.w > 0 && box.y < r.height && box.y + box.h > 0) text = box;
-            }
-            pond.resize(r.width, r.height, text, r.width < 768);
+            pond.resize(r.width, r.height, r.width < 768);
+            measureFocus();
             pond.draw(ctx, dpr);
         };
 
@@ -62,7 +79,14 @@ const KoiPond = ({ avoidRef, className = '' }) => {
         layout();
         const ro = new ResizeObserver(layout);
         ro.observe(canvas);
-        if (avoidRef?.current) ro.observe(avoidRef.current);
+        // The text reflows on its own too (e.g. once the web fonts load).
+        const refocus = () => {
+            measureFocus();
+            pond.draw(ctx, dpr);
+        };
+        const fro = new ResizeObserver(refocus);
+        if (focusEl) fro.observe(focusEl);
+        document.fonts?.ready.then(refocus);
         const io = new IntersectionObserver(([e]) => {
             visible = e.isIntersecting;
             if (visible) start();
@@ -78,22 +102,25 @@ const KoiPond = ({ avoidRef, className = '' }) => {
         };
         const onMove = (e) => !reduced && pond.pointerMove(...local(e), performance.now() / 1000);
         const onLeave = () => pond.pointerLeave();
-        const onDown = (e) => !reduced && pond.tap(...local(e));
-        canvas.addEventListener('pointermove', onMove);
-        canvas.addEventListener('pointerleave', onLeave);
-        canvas.addEventListener('pointerdown', onDown);
+        // A click (not pointerdown, so a scroll on touch doesn't drop food) feeds
+        // the fish; clicks on links and buttons are left alone.
+        const onClick = (e) => !reduced && !e.target.closest('a, button') && pond.tap(...local(e));
+        area.addEventListener('pointermove', onMove);
+        area.addEventListener('pointerleave', onLeave);
+        area.addEventListener('click', onClick);
 
         return () => {
             stop();
             ro.disconnect();
+            fro.disconnect();
             mo.disconnect();
             io.disconnect();
             document.removeEventListener('visibilitychange', onVisibility);
-            canvas.removeEventListener('pointermove', onMove);
-            canvas.removeEventListener('pointerleave', onLeave);
-            canvas.removeEventListener('pointerdown', onDown);
+            area.removeEventListener('pointermove', onMove);
+            area.removeEventListener('pointerleave', onLeave);
+            area.removeEventListener('click', onClick);
         };
-    }, [avoidRef]);
+    }, []);
 
     return <canvas ref={canvasRef} className={className} aria-hidden="true" />;
 };

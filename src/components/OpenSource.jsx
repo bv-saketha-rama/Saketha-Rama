@@ -1,5 +1,6 @@
 import { ArrowUpRight } from 'lucide-react';
 import SectionShell from './SectionShell';
+import GitMergeIcon from './icons/GitMergeIcon';
 
 const contributions = [
     {
@@ -50,8 +51,8 @@ const OpenSource = () => (
                         </div>
                         <div className="flex items-center gap-5">
                             {item.link && (
-                                <a href={item.link} target="_blank" rel="noopener noreferrer" className="link-quiet" aria-label={`View PR for ${item.title} on GitHub`}>
-                                    View PR <ArrowUpRight size={14} aria-hidden="true" />
+                                <a href={item.link} target="_blank" rel="noopener noreferrer" className="pr-merged" aria-label={`View merged PR for ${item.title} on GitHub`} title="Merged pull request">
+                                    <GitMergeIcon size={20} />
                                 </a>
                             )}
                             {item.blog && (
