@@ -24,15 +24,14 @@ const Card = ({ brand, name, handle, quote }) => (
     </figure>
 );
 
+// Shown in the Connect panel, under the contact links.
 const Testimonials = () => (
-    <section id="testimonials" className="section" aria-labelledby="testimonials-title">
-        <header className="mb-10">
-            <h2 id="testimonials-title" className="text-[clamp(1.75rem,3.2vw,2.5rem)]">
-                Here&apos;s what my colleagues say about me
-            </h2>
-        </header>
+    <div aria-labelledby="testimonials-title">
+        <h3 id="testimonials-title" className="text-lg md:text-xl">
+            Here&apos;s what my colleagues say about me
+        </h3>
 
-        <div className="marquee">
+        <div className="marquee mt-4">
             <div className="marquee-track">
                 {[0, 1].map((copy) => (
                     <div key={copy} className="marquee-group" aria-hidden={copy === 1 ? 'true' : undefined}>
@@ -43,7 +42,7 @@ const Testimonials = () => (
                 ))}
             </div>
         </div>
-    </section>
+    </div>
 );
 
 export default Testimonials;

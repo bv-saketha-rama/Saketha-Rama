@@ -1,5 +1,6 @@
-import { ArrowUpRight } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import SectionShell from './SectionShell';
+import CardRow from './CardRow';
 
 const publications = [
     {
@@ -39,28 +40,31 @@ const publications = [
 
 const Research = () => (
     <SectionShell id="research" index="06" title="Research Publications">
-        <ol className="space-y-12">
-            {publications.map((pub, index) => (
-                <li key={pub.link} className="reveal grid grid-cols-[2.25rem_1fr] gap-x-3">
-                    <span className="meta pt-1.5">[{index + 1}]</span>
-                    <article className="min-w-0">
-                        <h3 className="text-lg md:text-xl leading-snug">{pub.title}</h3>
+        <CardRow
+            label="Research publications"
+            items={publications.map((pub) => ({
+                key: pub.link,
+                content: (
+                    <article className="card p-5 xl:p-6">
+                        <div className="flex items-center justify-between gap-6">
+                            <p className="meta uppercase">{pub.publisher}</p>
+                            <a href={pub.link} target="_blank" rel="noopener noreferrer" className="link-quiet shrink-0" aria-label={`Read paper: ${pub.title}`}>
+                                Read paper <FileText size={15} aria-hidden="true" />
+                            </a>
+                        </div>
+                        <h3 className="mt-3 text-lg xl:text-xl leading-snug">{pub.title}</h3>
                         <p className="mt-2 font-serif italic text-[1.05rem] leading-snug text-muted">{pub.conference}</p>
-                        <p className="meta mt-2 uppercase">{pub.publisher}</p>
-                        <ul className="mt-5 space-y-2.5">
+                        <ul className="mt-4 space-y-2">
                             {pub.bullets.map((bullet) => (
-                                <li key={bullet} className="bullet text-[0.94rem] leading-relaxed text-muted">
+                                <li key={bullet} className="bullet card-text text-muted">
                                     {bullet}
                                 </li>
                             ))}
                         </ul>
-                        <a href={pub.link} target="_blank" rel="noopener noreferrer" className="link-quiet mt-5">
-                            Read paper <ArrowUpRight size={14} aria-hidden="true" />
-                        </a>
                     </article>
-                </li>
-            ))}
-        </ol>
+                ),
+            }))}
+        />
     </SectionShell>
 );
 

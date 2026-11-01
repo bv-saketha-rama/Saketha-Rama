@@ -1,15 +1,13 @@
-// Shared section frame: mono index and heading on the left, content on the right.
+// Shared panel frame: mono index and heading above the content. The panel
+// scrolls on its own only when the screen is too short to show it all.
 const SectionShell = ({ id, index, title, children }) => (
-    <section id={id} className="section">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-8">
-            <header className="lg:col-span-4">
-                <div className="lg:sticky lg:top-24">
-                    <p className="meta mb-3 text-ink">{index}</p>
-                    <h2 className="text-[clamp(1.75rem,3.2vw,2.5rem)]">{title}</h2>
-                </div>
+    <section id={id} className="panel-scroll" aria-labelledby={`${id}-title`}>
+        <div className="panel-body">
+            <header className="panel-heading flex items-baseline gap-4">
+                <p className="meta text-ink">{index}</p>
+                <h2 id={`${id}-title`} className="text-[clamp(1.6rem,2.6vw,2.25rem)]">{title}</h2>
             </header>
-
-            <div className="lg:col-span-8 min-w-0">{children}</div>
+            {children}
         </div>
     </section>
 );

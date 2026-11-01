@@ -83,7 +83,7 @@ export function createPond({ reduced = false, seed = 7 } = {}) {
     let nextAmbient = 3;
     const pointer = { x: 0, y: 0, on: false, speed: 0, movedAt: -9, lastRipple: { x: -999, y: -999, t: -9 } };
     // Text laid over the pond: fish swimming under it fade back (see draw).
-    let focus = null;
+    let focus = []; // boxes of the text, in pond coordinates
     let layer = null; // fish are drawn here first, then faded under the text
     let mask = null; // soft-edged zone around the text; alpha = how much to fade
     let maskKey = '';
@@ -816,7 +816,7 @@ export function createPond({ reduced = false, seed = 7 } = {}) {
         batches.clear();
         batches.set(water.shadow, []);
         for (let i = fish.length - 1; i >= 0; i--) rasterFish(fish[i]);
-        if (!focus) {
+        if (!focus.length) {
             flush(ctx);
             return;
         }
@@ -840,7 +840,9 @@ export function createPond({ reduced = false, seed = 7 } = {}) {
         flush(l);
         l.setTransform(1, 0, 0, 1, 0, 0);
         l.globalCompositeOperation = 'destination-out';
+        l.globalAlpha = FADE;
         l.drawImage(mask, 0, 0);
+        l.globalAlpha = 1;
         l.globalCompositeOperation = 'source-over';
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.drawImage(layer, 0, 0);
@@ -856,49 +858,55 @@ export function createPond({ reduced = false, seed = 7 } = {}) {
         }
     };
 
-    // The fade zone: the text's box plus some padding, feathered at the edges.
+    // The fade zones: each text box plus some padding, feathered at the edges.
     // Drawn as the blurred shadow of an off-canvas rectangle, so the edge is a
-    // smooth falloff rather than a visible box. Rebuilt only when it changes.
+    // smooth falloff rather than a visible box. Zones are drawn at full strength
+    // and the whole mask applied at FADE, so where two overlap the fish don't dim
+    // twice. Rebuilt only when it changes.
     const FADE = 0.78; // fish under the text keep ~22% of their opacity
     const PAD = 22;
     const FEATHER = 34;
     const buildMask = (width, height, dpr) => {
-        const key = `${width}x${height}@${dpr}:${focus.x},${focus.y},${focus.w},${focus.h}`;
+        const key = `${width}x${height}@${dpr}:${focus.map((f) => `${f.x},${f.y},${f.w},${f.h}`).join(';')}`;
         if (key === maskKey) return;
         maskKey = key;
-        mask.width = width;
-        mask.height = height;
+        if (mask.width !== width || mask.height !== height) {
+            mask.width = width;
+            mask.height = height;
+        }
         const m = mask.getContext('2d');
-        const x = (focus.x - PAD) * dpr;
-        const y = (focus.y - PAD) * dpr;
-        const off = width + 100; // the rectangle itself sits off-canvas; only its shadow lands
-        m.shadowColor = `rgba(0,0,0,${FADE})`;
+        m.clearRect(0, 0, width, height);
+        const off = width + 100; // the rectangles themselves sit off-canvas; only their shadows land
+        m.shadowColor = '#000';
         m.shadowBlur = FEATHER * dpr;
         m.shadowOffsetX = off;
         m.fillStyle = '#000';
-        m.fillRect(x - off, y, (focus.w + PAD * 2) * dpr, (focus.h + PAD * 2) * dpr);
+        for (const f of focus) {
+            m.fillRect((f.x - PAD) * dpr - off, (f.y - PAD) * dpr, (f.w + PAD * 2) * dpr, (f.h + PAD * 2) * dpr);
+        }
     };
 
     return {
         setTheme(dark) {
             water = dark ? WATER.dark : WATER.light;
         },
-        // The box of the text over the pond, in pond coordinates (or null).
-        setFocus(rect) {
-            focus = rect && rect.w > 0 && rect.h > 0 ? rect : null;
+        // The boxes of the text over the pond, in pond coordinates.
+        setFocus(rects) {
+            focus = rects.filter((r) => r.w > 0 && r.h > 0);
         },
         resize(w, h, mobile) {
             const fresh = !fish.length || Math.abs(w - W) > 80 || Math.abs(h - H) > 80;
             W = w;
             H = h;
-            cell = mobile ? 4 : 5;
+            // Big, chunky fish: coarse cells and a small school.
+            cell = mobile ? 5 : 8;
             cols = Math.ceil(W / cell) + 2;
             occ = new Uint8Array(cols * (Math.ceil(H / cell) + 2));
             layoutPads(mobile);
             layoutSparks();
             if (fresh) {
-                const count = mobile ? 7 : clamp(Math.round((W * H) / 75000), 8, 15);
-                const scale = mobile ? 0.6 : clamp(H / 700, 0.72, 1) * clamp(W / 700, 0.75, 1);
+                const count = mobile ? 5 : clamp(Math.round((W * H) / 170000), 5, 8);
+                const scale = mobile ? 0.75 : 1.6 * clamp(H / 800, 0.75, 1) * clamp(W / 1100, 0.75, 1);
                 // A mixed school: a few big fish, more medium and small ones, and some fry.
                 const sizes = [];
                 for (let i = 0; i < count; i++) {

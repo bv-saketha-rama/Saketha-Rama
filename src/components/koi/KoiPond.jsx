@@ -3,6 +3,11 @@ import { createPond } from './pond';
 
 // Decorative koi pond filling its parent. Pointer and clicks are read from the
 // parent, so the pond still reacts under any content laid over it.
+//
+// Text marked data-pond-focus (the intro, and the header laid over the top of
+// the pond) fades the fish that swim under it. Each box is measured from the
+// words themselves (not the full-width blocks holding them), so only the area
+// around them is affected.
 const KoiPond = ({ className = '' }) => {
     const canvasRef = useRef(null);
 
@@ -17,18 +22,14 @@ const KoiPond = ({ className = '' }) => {
         let visible = false;
         let last = 0;
 
-        // Text marked data-pond-focus fades the fish that swim under it. Its box is
-        // measured from the text itself (not the full-width blocks holding it), so
-        // only the area around the words is affected.
         const area = canvas.parentElement;
-        const focusEl = area.querySelector('[data-pond-focus]');
-        const measureFocus = () => {
-            if (!focusEl) return;
-            const c = canvas.getBoundingClientRect();
-            const range = document.createRange();
+        const header = document.querySelector('header');
+        const focusEls = () => [header, area].flatMap((el) => (el ? [...el.querySelectorAll('[data-pond-focus]')] : []));
+        const range = document.createRange();
+        const textBox = (el) => {
             let [l, t, r, b] = [Infinity, Infinity, -Infinity, -Infinity];
-            for (const child of focusEl.children) {
-                range.selectNodeContents(child);
+            for (const node of el.children.length ? el.children : [el]) {
+                range.selectNodeContents(node);
                 const box = range.getBoundingClientRect();
                 if (!box.width || !box.height) continue;
                 l = Math.min(l, box.left);
@@ -36,7 +37,19 @@ const KoiPond = ({ className = '' }) => {
                 r = Math.max(r, box.right);
                 b = Math.max(b, box.bottom);
             }
-            pond.setFocus(r > l ? { x: Math.round(l - c.left), y: Math.round(t - c.top), w: Math.round(r - l), h: Math.round(b - t) } : null);
+            return r > l ? { l, t, r, b } : null;
+        };
+        // Measured afresh each frame, so the zones follow the panel sliding and the
+        // intro settling in; the mask is only rebuilt when they actually move.
+        const measureFocus = () => {
+            const c = canvas.getBoundingClientRect();
+            const rects = [];
+            const add = (box) => {
+                if (!box || box.r < c.left || box.l > c.right || box.b < c.top || box.t > c.bottom) return;
+                rects.push({ x: Math.round(box.l - c.left), y: Math.round(box.t - c.top), w: Math.round(box.r - box.l), h: Math.round(box.b - box.t) });
+            };
+            for (const el of focusEls()) add(textBox(el));
+            pond.setFocus(rects);
         };
 
         const layout = () => {
@@ -51,6 +64,7 @@ const KoiPond = ({ className = '' }) => {
         };
 
         const frame = (now) => {
+            measureFocus();
             pond.update(Math.min(0.05, (now - last) / 1000));
             last = now;
             pond.draw(ctx, dpr);
@@ -79,13 +93,17 @@ const KoiPond = ({ className = '' }) => {
         layout();
         const ro = new ResizeObserver(layout);
         ro.observe(canvas);
-        // The text reflows on its own too (e.g. once the web fonts load).
+        // Without the animation loop (reduced motion), the zones are re-measured
+        // whenever something settles or is clicked.
         const refocus = () => {
+            if (raf) return;
             measureFocus();
             pond.draw(ctx, dpr);
         };
-        const fro = new ResizeObserver(refocus);
-        if (focusEl) fro.observe(focusEl);
+        const refocusSoon = () => requestAnimationFrame(refocus);
+        document.addEventListener('transitionend', refocus);
+        document.addEventListener('animationend', refocus);
+        area.addEventListener('click', refocusSoon);
         document.fonts?.ready.then(refocus);
         const io = new IntersectionObserver(([e]) => {
             visible = e.isIntersecting;
@@ -96,29 +114,47 @@ const KoiPond = ({ className = '' }) => {
         const onVisibility = () => (document.hidden ? stop() : start());
         document.addEventListener('visibilitychange', onVisibility);
 
+        // Pond coordinates of the pointer, or null when it's off the pond (the
+        // header still listens while another panel is on screen).
         const local = (e) => {
             const r = canvas.getBoundingClientRect();
-            return [e.clientX - r.left, e.clientY - r.top];
+            const [x, y] = [e.clientX - r.left, e.clientY - r.top];
+            return x >= 0 && x <= r.width && y >= 0 && y <= r.height ? [x, y] : null;
         };
-        const onMove = (e) => !reduced && pond.pointerMove(...local(e), performance.now() / 1000);
+        const onMove = (e) => {
+            const p = !reduced && local(e);
+            if (p) pond.pointerMove(...p, performance.now() / 1000);
+            else pond.pointerLeave();
+        };
         const onLeave = () => pond.pointerLeave();
         // A click (not pointerdown, so a scroll on touch doesn't drop food) feeds
         // the fish; clicks on links and buttons are left alone.
-        const onClick = (e) => !reduced && !e.target.closest('a, button') && pond.tap(...local(e));
-        area.addEventListener('pointermove', onMove);
-        area.addEventListener('pointerleave', onLeave);
-        area.addEventListener('click', onClick);
+        const onClick = (e) => {
+            const p = !reduced && !e.target.closest('a, button') && local(e);
+            if (p) pond.tap(...p);
+        };
+        // The header sits over the top of the pond, so it listens too.
+        const areas = [area, header].filter(Boolean);
+        for (const a of areas) {
+            a.addEventListener('pointermove', onMove);
+            a.addEventListener('pointerleave', onLeave);
+            a.addEventListener('click', onClick);
+        }
 
         return () => {
             stop();
             ro.disconnect();
-            fro.disconnect();
             mo.disconnect();
             io.disconnect();
             document.removeEventListener('visibilitychange', onVisibility);
-            area.removeEventListener('pointermove', onMove);
-            area.removeEventListener('pointerleave', onLeave);
-            area.removeEventListener('click', onClick);
+            document.removeEventListener('transitionend', refocus);
+            document.removeEventListener('animationend', refocus);
+            area.removeEventListener('click', refocusSoon);
+            for (const a of areas) {
+                a.removeEventListener('pointermove', onMove);
+                a.removeEventListener('pointerleave', onLeave);
+                a.removeEventListener('click', onClick);
+            }
         };
     }, []);
 

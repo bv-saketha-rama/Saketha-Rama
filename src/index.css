@@ -18,8 +18,9 @@
   --lift: rgba(23, 25, 30, 0.18);
 
   --gutter: clamp(1.25rem, 4vw, 2.5rem);
-  --section-y: clamp(4.5rem, 10vw, 8rem);
-  --header-h: 64px;
+  --header-h: 68px;
+  /* Card body text: shrinks a little on short screens so panels fit without scrolling. */
+  --fs-card: clamp(0.85rem, 0.35rem + 1.1vh, 1rem);
   color-scheme: light;
 }
 
@@ -41,7 +42,8 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 16px); }
+/* The page never scrolls: the panels slide sideways instead (see HomePage). */
+html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
 
 body {
   margin: 0;
@@ -52,7 +54,6 @@ body {
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: clip;
 }
 
 h1, h2, h3, h4 {
@@ -109,6 +110,23 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 :root[data-theme="dark"] .pr-merged { color: #A371F7; }
 :root[data-theme="dark"] .pr-merged:hover { color: #BC8CFF; }
 
+.pr-icon { color: #8250DF; }
+:root[data-theme="dark"] .pr-icon { color: #A371F7; }
+
+/* Identifiers in prose: methods, types, operators. */
+.code-inline {
+  padding: 0.08em 0.4em;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.86em;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
 .tag-yc { color: var(--yc); border-color: rgba(232, 107, 35, 0.3); }
 
 .bullet { position: relative; padding-left: 1.1rem; }
@@ -130,7 +148,32 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 }
 .card:hover { transform: translateY(-2px); border-color: var(--border-strong); box-shadow: 0 6px 20px -14px var(--lift); }
 
-.section { padding-block: var(--section-y); border-top: 1px solid var(--border); }
+.card-text { font-size: var(--fs-card); line-height: 1.6; }
+
+/* Full-screen panels in a row. The track slides by whole panels; overflow: clip
+   (not hidden) so nothing, e.g. focusing a link, can scroll the row itself. */
+.app { height: 100vh; height: 100dvh; }
+.deck { height: 100%; overflow: clip; }
+.deck-track { display: flex; height: 100%; transition: transform 750ms cubic-bezier(0.65, 0, 0.35, 1); }
+.panel { position: relative; flex: 0 0 100%; height: 100%; min-width: 0; }
+/* Content sits below the fixed header; a panel only scrolls itself if the
+   screen is too short for it (mostly phones). */
+.panel-scroll {
+  position: absolute;
+  inset: var(--header-h) 0 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.panel-body {
+  max-width: 1400px;
+  margin-inline: auto;
+  padding: clamp(0.75rem, 3vh, 2.5rem) var(--gutter) clamp(1.5rem, 4vh, 3rem);
+}
+.panel-heading { margin-bottom: clamp(1.25rem, 3.5vh, 2.5rem); }
+/* Each panel's content settles in as it arrives. */
+.panel[data-active] .panel-body > *,
+.panel[data-active] .hero-text { animation: rise-in 0.6s 0.3s both; }
+.panel[data-active] .panel-body > * + * { animation-delay: 0.4s; }
 
 .nav-link { position: relative; padding-block: 0.35rem; }
 .nav-link[aria-current="true"]::after {
@@ -183,15 +226,14 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 .yc-phrase:hover .w, .yc-phrase:focus-visible .w { transform: skewX(-8deg); }
 @keyframes yc-underline { from { background-size: 0% 1.5px; } to { background-size: 100% 1.5px; } }
 
-/* Hero koi pond: the hero fills the first screen exactly, so the divider below
-   it sits just past the fold. The pond spans the whole hero, edge to edge, behind the intro. */
-.hero { min-height: calc(100vh - var(--header-h)); min-height: calc(100svh - var(--header-h)); }
+/* First panel: the koi pond fills it edge to edge, up behind the (see-through)
+   header, with the intro over it. */
+.hero { position: relative; height: 100%; overflow: hidden; }
 .pond {
   position: absolute;
-  top: 0;
-  left: calc(50% - 50vw);
+  inset: 0;
   display: block;
-  width: 100vw;
+  width: 100%;
   height: 100%;
   touch-action: pan-y;
 }
@@ -212,11 +254,39 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 .testimonial:hover { transform: none; }
 @keyframes marquee { to { transform: translateX(-50%); } }
 
-.reveal {
-  animation: rise-in 0.7s both;
-  animation-timeline: view();
-  animation-range: entry 0% cover 22%;
+/* Card rows (open source, research): all cards side by side on desktop. */
+.card-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
+@media (min-width: 1024px) {
+  .card-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.card-row-item { display: flex; flex-direction: column; min-width: 0; }
+.card-row .card { flex: 1 1 auto; }
+.card-row .card:hover { transform: none; }
+
+/* Experience timeline: a rail of stops; each stop's rail runs into the gap,
+   so the segments read as one line. */
+.timeline-stops { --gap: 1.25rem; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap); }
+.timeline-stop { position: relative; min-width: 0; padding: 0 0 0.25rem; text-align: left; background: none; border: 0; cursor: pointer; }
+.timeline-stop:not(:last-child) .timeline-rail { right: calc(-1 * var(--gap)); }
+.timeline-rail { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--border-strong); }
+.timeline-stop[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.35rem;
+  width: 1.75rem;
+  height: 2px;
+  background: var(--yc);
+}
+.exp-detail { animation: rise-in 0.45s both; }
+.exp-detail:hover { transform: none; }
 
 @keyframes rise-in {
   from { opacity: 0; transform: translateY(16px); }
@@ -224,7 +294,6 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   .yc-phrase { background-size: 100% 1.5px; }
   .marquee { overflow-x: auto; }
@@ -232,3 +301,9 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   .marquee-group[aria-hidden="true"] { display: none; }
   .yc-phrase:hover .w, .yc-phrase:focus-visible .w { transform: none; }
 }
+
+/* Connect: the footer sits at the bottom of the screen, however short the
+   content above it. */
+#connect .panel-body { min-height: 100%; display: flex; flex-direction: column; }
+#connect .panel-body > :nth-last-child(2) { margin-bottom: clamp(1.75rem, 5vh, 3rem); }
+#connect footer { margin-top: auto; }

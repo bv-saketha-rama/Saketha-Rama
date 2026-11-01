@@ -7,9 +7,9 @@ const Writing = () => {
 
     return (
         <SectionShell id="writing" index="05" title="Writing">
-            <ul className="border-t border-line">
+            <ul className="max-w-4xl border-t border-line">
                 {posts.map((post) => (
-                    <li key={post.id} className="reveal border-b border-line">
+                    <li key={post.id} className="border-b border-line">
                         <article className="group grid grid-cols-1 sm:grid-cols-[7.5rem_1fr] gap-x-6 gap-y-2 py-7">
                             <p className="meta pt-1">{post.date}</p>
                             <div className="min-w-0">

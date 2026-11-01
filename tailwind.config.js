@@ -23,6 +23,7 @@ export default {
             },
             maxWidth: {
                 page: '1160px',
+                wide: '1400px',
             },
         },
     },
