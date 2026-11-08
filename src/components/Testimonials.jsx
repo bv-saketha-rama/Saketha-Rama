@@ -16,7 +16,7 @@ const Card = ({ brand, name, handle, quote }) => (
             <BrandLogo brand={brand} />
             <span className="min-w-0 flex-1 leading-tight">
                 <span className="block font-display font-semibold text-ink">{name}</span>
-                <span className="block text-[0.8rem] text-muted truncate">{handle} · AI coworker</span>
+                <span className="block text-[0.8rem] text-muted truncate">{handle}</span>
             </span>
             <MessageCircle size={16} className="text-muted shrink-0" aria-hidden="true" />
         </figcaption>

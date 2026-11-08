@@ -9,7 +9,7 @@ const experiences = [
         emoji: { char: "🧑‍🎓", label: "College student" },
         company: "Indian Institute of Information Technology, Design & Manufacturing, Kancheepuram",
         short: "IIITDM Kancheepuram",
-        role: "B.Tech CSE · Teaching Assistant",
+        role: "B.Tech CSE",
         roles: [
             {
                 title: "Teaching Assistant",
@@ -44,7 +44,6 @@ const experiences = [
         role: "Data Engineering Intern",
         roles: [
             {
-                title: "Data Engineering Intern",
                 bullets: [
                     "Engineered automated ETL pipelines using Informatica, Python, and SQL, orchestrated via Apache Airflow and deployed through Jenkins CI/CD, ensuring reliable and maintainable data workflows.",
                     "Designed scalable data storage on Vertica and AWS S3, improving availability, performance, and enabling faster analytics across business intelligence teams."
@@ -58,21 +57,21 @@ const experiences = [
         timerange: "Apr 2025 - Present",
         emoji: { char: "🧑‍💻", label: "Software engineer" },
         company: "DeepEdge AI",
-        role: "Backend & AI/ML Engineer",
+        role: "Software Development Engineer I",
         roles: [
             {
-                title: "Backend & AI/ML Engineer",
                 bullets: [
-                    "Built frontend and backend flows for AI-assisted labeling, including model selection, inference request state, loading and timeout handling, annotation result processing and analytics APIs for task, project and annotator activity.",
-                    "Contributed to shared authentication infrastructure for user and service identities, including JWT signature and expiry validation, identity and role propagation across service-to-service calls and multi-secret validation for token secret rotation.",
-                    "Designed RBAC and ownership-based authorization for multi-tenant annotation workflows, enforcing role-specific visibility, creator and assignee permissions and write restrictions across annotation, validation, rejection and completion states.",
-                    "Integrated asynchronous inference using RabbitMQ for job dispatch and Redis for job status and results, with request timeouts, reconnect handling, trace propagation and non-blocking polling between the annotation service and model runtimes.",
-                    "Built AI-assisted annotation workflows integrating SAM, GroundingDINO, CLIP, Florence-2, YOLO Pose and other vision models through an existing inference abstraction, with model weights stored on EFS and loaded into Docker-based runtimes.",
-                    "Owned a FastAPI annotation microservice as part of a monolith-to-microservices migration, refactoring APIs and schemas for multi-tenant image and video labeling, task lifecycle management, workflow transitions and dataset version publishing."
+                    "Reduced annotation dashboard backend response time by 96% (7.44 s → 290 ms) through metadata projection and batched permission reads, reducing metadata payload by 99.5%.",
+                    "Owned the annotation microservice during a monolith-to-microservices migration, delivering end-to-end annotation workflows and productivity analytics tracking labeling progress, review time and rework.",
+                    "Built asynchronous GPU inference pipelines using RabbitMQ and Redis with model-status tracking and inactivity-based shutdown to decouple inference workloads from interactive API requests.",
+                    "Integrated and containerized SAM2, SAM 3.1, GroundingDINO, Florence-2, CLIP, and SpeciesNet for object detection, segmentation and classification within AI-assisted annotation workflows.",
+                    "Prevented annotation loss during concurrent saves using task-scoped locking, atomic file replacement, and image-scoped updates. Improved batch reliability with resumable checkpoints and duplicate-task prevention.",
+                    "Secured JWT-authenticated service calls with role-, ownership-, and workflow-based authorization across annotation, review, and dataset publishing while preserving tenant context.",
+                    "Optimized image and video annotation with progressive loading, canvas rendering improvements, persistent tracking identities, and cross-frame editing."
                 ]
             }
         ],
-        tech: ["Python", "FastAPI", "RabbitMQ", "Redis", "Docker", "EFS", "AI/ML"]
+        tech: ["Python", "FastAPI", "RabbitMQ", "Redis", "Docker", "AWS", "Inference Engineering", "CI/CD"]
     }
 ];
 

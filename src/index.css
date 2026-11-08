@@ -287,11 +287,97 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 }
 .exp-detail { animation: rise-in 0.45s both; }
 .exp-detail:hover { transform: none; }
+#experience .meta {
+  font-family: 'Manrope', system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.exp-detail .card-text {
+  font-family: 'Manrope', system-ui, sans-serif;
+  font-size: clamp(0.9375rem, 0.85rem + 0.15vw, 1rem);
+  font-weight: 400;
+  line-height: 1.8;
+  letter-spacing: 0.005em;
+}
 
 @keyframes rise-in {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Projects: an image-led gallery with captions outside the artwork. */
+.project-gallery { width: min(100%, 1040px); margin-inline: auto; }
+.project-feature {
+  display: grid;
+  grid-template-columns: 1.5rem minmax(0, 1fr);
+  column-gap: 1rem;
+  width: min(100%, calc(48svh * 1672 / 941 + 2.5rem));
+  margin-inline: auto;
+  min-width: 0;
+}
+.project-feature > .project-preview, .project-feature > .project-caption { grid-column: 2; width: 100%; }
+.project-feature + .project-feature { margin-top: clamp(3rem, 7vh, 5rem); }
+.project-preview {
+  position: relative;
+  display: block;
+  width: min(100%, calc(48svh * 1672 / 941));
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--surface);
+  isolation: isolate;
+}
+.project-image { display: block; width: 100%; height: auto; transition: transform 650ms cubic-bezier(.2,.7,.2,1); }
+a.project-preview:hover .project-image, a.project-preview:focus-visible .project-image { transform: scale(1.025); }
+.project-preview-action {
+  position: absolute;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 999px;
+  background: rgba(10,12,15,0.85);
+  color: #fff;
+  font-size: 0.8rem;
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 250ms ease, transform 250ms ease;
+}
+.project-preview:hover .project-preview-action, .project-preview:focus-visible .project-preview-action { opacity: 1; transform: translateY(0); }
+.project-caption {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+  gap: 1.5rem 3rem;
+  width: min(100%, calc(48svh * 1672 / 941));
+  margin: 1.5rem auto 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border-strong);
+}
+.project-title-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.75rem; }
+.project-number { grid-column: 1; grid-row: 1; align-self: start; color: var(--yc); }
+.project-title { font-size: clamp(1.35rem, 2vw, 1.8rem); letter-spacing: -0.04em; }
+.project-tagline { margin-top: 0.5rem; color: var(--text); font-size: 1rem; }
+.project-description { margin-top: 0.3rem; max-width: 38ch; font-size: 0.9rem; }
+.project-details { display: flex; flex-direction: column; align-items: flex-end; gap: 1rem; }
+.project-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.75rem 1.25rem; }
+.project-links svg { transition: transform 200ms ease; }
+.project-links a:hover svg { transform: translate(2px, -2px); }
+.project-stack { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.35rem 1rem; margin: 0; padding: 0; list-style: none; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.65rem; color: var(--text-2); }
+[data-active] .project-preview { animation: rise-in 600ms both; }
+[data-active] .project-caption { animation: rise-in 600ms 100ms both; }
+@media (max-width: 640px) {
+  .project-feature { width: 100%; grid-template-columns: 1.25rem minmax(0, 1fr); column-gap: 0.5rem; }
+  .project-preview, .project-caption { width: 100%; }
+  .project-caption { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; margin-top: 1rem; }
+  .project-details { align-items: flex-start; }
+  .project-stack, .project-links { justify-content: flex-start; }
+}
+@media (hover: none) { .project-preview-action { display: none; } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
